@@ -1,0 +1,16 @@
+﻿-- ============================================================
+-- MODULO 001: USUARIOS, ROLES Y PERMISOS
+-- MIGRACION 015: DOCUMENTAR CORRECCION DE ACTIVACION
+-- ============================================================
+
+-- La migracion 014 actualiza public.crear_perfil_usuario()
+-- para determinar el estado inicial del perfil durante el
+-- INSERT de auth.users.
+--
+-- Por este motivo no se necesita un segundo trigger AFTER INSERT
+-- sobre auth.users ni modificar el orden de los triggers.
+--
+-- Se conserva el trigger trg_crear_perfil_usuario.
+-- Se conserva el trigger trg_activar_perfil_tras_confirmacion.
+--
+-- No se realizan modificaciones sobre auth.users.

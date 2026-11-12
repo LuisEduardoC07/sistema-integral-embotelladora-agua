@@ -1,9 +1,10 @@
-export const instant = false;
-
+import { connection } from "next/server";
 import { protegerPanel } from "@/lib/seguridad/proteger-panel";
 import { PanelDashboard } from "@/components/panel/PanelDashboard";
 
 export default async function PaginaPanel() {
+  await connection();
+
   const perfil = await protegerPanel("administrador");
 
   return (

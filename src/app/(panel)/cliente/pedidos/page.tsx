@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import Link from "next/link";
 import { protegerPanel } from "@/lib/seguridad/proteger-panel";
 import { obtenerPedidosDelCliente } from "@/services/pedidos/pedidos-cliente.service";
@@ -116,6 +117,7 @@ function TarjetaPedido({ pedido }: { pedido: PedidoCliente }) {
 }
 
 export default async function PaginaMisPedidos() {
+  await connection();
   await protegerPanel("cliente");
   const resultado = await obtenerPedidosDelCliente();
 

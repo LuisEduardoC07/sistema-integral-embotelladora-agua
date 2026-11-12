@@ -1,8 +1,10 @@
+import { connection } from "next/server";
 import { protegerPanel } from "@/lib/seguridad/proteger-panel";
 import { GestionUsuarios } from "@/components/usuarios/GestionUsuarios";
 
 
 export default async function PaginaCajeros() {
+  await connection();
   await protegerPanel("superusuario");
 
   return (

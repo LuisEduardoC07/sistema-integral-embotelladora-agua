@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { exigirPermiso } from "@/lib/seguridad/autorizacion";
 
@@ -32,6 +33,7 @@ function fecha(valor: string | null) {
 }
 
 export default async function PaginaCajas() {
+  await connection();
   await exigirPermiso("caja.consultar_todas");
   const admin = createAdminClient();
 

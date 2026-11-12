@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { protegerPanel } from "@/lib/seguridad/proteger-panel";
 import { createClient } from "@/lib/supabase/server";
 import PerfilCliente from "@/components/cliente/PerfilCliente";
@@ -5,6 +6,7 @@ import PerfilCliente from "@/components/cliente/PerfilCliente";
 export const instant = false;
 
 export default async function PaginaPerfilCliente() {
+  await connection();
   const perfil = await protegerPanel("cliente");
   const supabase = await createClient();
 

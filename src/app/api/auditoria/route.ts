@@ -122,6 +122,26 @@ export async function GET() {
       }
     }
 
+    const idsSinPerfil = ids.filter((id) => !perfilesMap.has(id));
+
+    if (idsSinPerfil.length > 0) {
+      const { data: identidadesArchivadas, error: errorIdentidades } = await admin
+        .from("identidades_usuarios_eliminados")
+        .select("usuario_id, nombre, rol_codigo")
+        .in("usuario_id", idsSinPerfil);
+
+      if (errorIdentidades) {
+        console.error("[Identidades históricas de auditoría]", errorIdentidades.message);
+        throw new Error("No fue posible consultar las identidades históricas.");
+      }
+
+      for (const identidad of identidadesArchivadas ?? []) {
+        perfilesMap.set(identidad.usuario_id, {
+          nombre: identidad.nombre,
+          rol: identidad.rol_codigo ?? "Sin rol",
+        });
+      }
+    }
     const usuarios = registrosUsuarios.map((registro) => ({
       id: registro.id,
       tipo: "usuarios" as const,

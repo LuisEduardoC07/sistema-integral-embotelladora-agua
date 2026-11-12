@@ -17,6 +17,7 @@ export interface FiltrosHistorialVentas {
 export interface CajeroHistorialOption {
   id: string;
   nombre: string;
+  eliminado: boolean;
 }
 
 export interface DetalleVentaHistorial {
@@ -56,6 +57,7 @@ export interface VentaHistorial {
   observaciones: string | null;
   creado_en: string;
   anulada_por: string | null;
+  anulada_por_nombre: string | null;
   anulada_en: string | null;
   motivo_anulacion: string | null;
   cambio_devuelto: number;

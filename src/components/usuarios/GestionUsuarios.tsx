@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 type RolSistema = "administrador" | "superusuario";
-type RolGestionable = "administrador" | "cajero";
+type RolGestionable = "cliente" | "administrador" | "cajero";
 type EstadoUsuario = "pendiente" | "activo" | "suspendido";
 
 interface Usuario {
@@ -33,6 +33,7 @@ interface RespuestaAPI {
   mensaje?: string;
   usuarios?: Usuario[];
   auditoria?: RegistroAuditoria[];
+  authPendiente?: boolean;
 }
 
 export function GestionUsuarios({
@@ -44,7 +45,7 @@ export function GestionUsuarios({
 }) {
   const esSuperusuario = rolActual === "superusuario";
 
-const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [auditoria, setAuditoria] = useState<RegistroAuditoria[]>([]);
   const [busqueda, setBusqueda] = useState("");
   const [filtroRol, setFiltroRol] = useState("todos");
@@ -57,19 +58,25 @@ const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [confirmacionPassword, setConfirmacionPassword] = useState("");
   const [rolNuevo, setRolNuevo] = useState<RolGestionable>("cajero");
 
+  const [editando, setEditando] = useState<Usuario | null>(null);
+  const [nombreEdicion, setNombreEdicion] = useState("");
+  const [emailEdicion, setEmailEdicion] = useState("");
+  const [telefonoEdicion, setTelefonoEdicion] = useState("");
+  const [passwordNuevo, setPasswordNuevo] = useState("");
+  const [confirmacionPasswordNueva, setConfirmacionPasswordNueva] = useState("");
+
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
   const [usuarioProcesado, setUsuarioProcesado] = useState("");
   const [error, setError] = useState("");
   const [exito, setExito] = useState("");
+
   const usuariosDelModulo = useMemo(
     () => soloCajeros
       ? usuarios.filter((usuario) => usuario.rol === "cajero")
       : usuarios,
     [usuarios, soloCajeros],
   );
-
-
 
   const cargarUsuarios = useCallback(async () => {
     setCargando(true);
@@ -186,7 +193,10 @@ const [usuarios, setUsuarios] = useState<Usuario[]>([]);
     }
   }
 
-  async function cambiarEstado(usuario: Usuario, accion: "desactivar" | "reactivar") {
+  async function cambiarEstado(
+    usuario: Usuario,
+    accion: "desactivar" | "reactivar"
+  ) {
     const texto = accion === "desactivar"
       ? `¿Deseas desactivar la cuenta de ${usuario.nombre}? Su historial se conservará.`
       : `¿Deseas reactivar la cuenta de ${usuario.nombre}?`;
@@ -218,6 +228,164 @@ const [usuarios, setUsuarios] = useState<Usuario[]>([]);
     } catch (e) {
       setError(
         e instanceof Error ? e.message : "No fue posible modificar la cuenta."
+      );
+    } finally {
+      setUsuarioProcesado("");
+    }
+  }
+
+  function iniciarEdicion(usuario: Usuario) {
+    setEditando(usuario);
+    setNombreEdicion(usuario.nombre);
+    setEmailEdicion(usuario.email);
+    setTelefonoEdicion(usuario.telefono ?? "");
+    setPasswordNuevo("");
+    setConfirmacionPasswordNueva("");
+    setError("");
+    setExito("");
+  }
+
+  function cerrarEdicion() {
+    if (guardando) return;
+    setEditando(null);
+    setNombreEdicion("");
+    setEmailEdicion("");
+    setTelefonoEdicion("");
+    setPasswordNuevo("");
+    setConfirmacionPasswordNueva("");
+  }
+
+  async function guardarEdicion(evento: React.FormEvent<HTMLFormElement>) {
+    evento.preventDefault();
+    if (!editando || guardando) return;
+
+    setError("");
+    setExito("");
+
+    setGuardando(true);
+
+    try {
+      const respuesta = await fetch("/api/usuarios", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          usuarioId: editando.id,
+          accion: "editar",
+          nombre: nombreEdicion,
+          email: emailEdicion,
+          telefono: telefonoEdicion,
+        }),
+      });
+
+      const datos = await respuesta.json() as RespuestaAPI;
+
+      if (!respuesta.ok) {
+        throw new Error(datos.error || "No fue posible guardar los cambios.");
+      }
+
+      setExito(datos.mensaje || "Los datos fueron actualizados.");
+      cerrarEdicion();
+      await cargarUsuarios();
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : "No fue posible guardar los cambios."
+      );
+    } finally {
+      setGuardando(false);
+    }
+  }
+
+  async function cambiarPassword(evento: React.FormEvent<HTMLFormElement>) {
+    evento.preventDefault();
+    if (!editando || guardando) return;
+
+    if (passwordNuevo.length < 8 || passwordNuevo.length > 72) {
+      setError("La contraseña debe tener entre 8 y 72 caracteres.");
+      return;
+    }
+
+    if (passwordNuevo !== confirmacionPasswordNueva) {
+      setError("Las contraseñas nuevas no coinciden.");
+      return;
+    }
+
+    if (!window.confirm(`¿Confirmas cambiar la contraseña de ${editando.nombre}?`)) {
+      return;
+    }
+
+    setError("");
+    setExito("");
+    setGuardando(true);
+
+    try {
+      const respuesta = await fetch("/api/usuarios", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          usuarioId: editando.id,
+          accion: "password",
+          password: passwordNuevo,
+        }),
+      });
+
+      const datos = await respuesta.json() as RespuestaAPI;
+
+      if (!respuesta.ok) {
+        throw new Error(datos.error || "No fue posible cambiar la contraseña.");
+      }
+
+      setPasswordNuevo("");
+      setConfirmacionPasswordNueva("");
+      setExito(datos.mensaje || "La contraseña fue actualizada.");
+      cerrarEdicion();
+      await cargarUsuarios();
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : "No fue posible cambiar la contraseña."
+      );
+    } finally {
+      setGuardando(false);
+    }
+  }
+
+  async function eliminarUsuario(usuario: Usuario) {
+    const motivo = window.prompt(
+      `Indica el motivo de eliminación de la cuenta de ${usuario.nombre}:`
+    );
+
+    if (motivo === null) return;
+
+    if (!window.confirm(
+      `ATENCIÓN: se eliminará permanentemente la cuenta de ${usuario.nombre}. Los registros comerciales e históricos se conservarán. Esta operación no se puede deshacer. ¿Deseas continuar?`
+    )) {
+      return;
+    }
+
+    setError("");
+    setExito("");
+    setUsuarioProcesado(usuario.id);
+
+    try {
+      const respuesta = await fetch("/api/usuarios", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          usuarioId: usuario.id,
+          motivo: motivo.trim(),
+        }),
+      });
+
+      const datos = await respuesta.json() as RespuestaAPI;
+
+      if (!respuesta.ok) {
+        throw new Error(datos.error || "No fue posible eliminar la cuenta.");
+      }
+
+      setExito(datos.mensaje || "La cuenta fue eliminada.");
+      await cargarUsuarios();
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : "No fue posible eliminar la cuenta."
       );
     } finally {
       setUsuarioProcesado("");
@@ -267,7 +435,7 @@ const [usuarios, setUsuarios] = useState<Usuario[]>([]);
               Usuarios y cuentas
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-200">
-              Crea cuentas de personal, consulta su estado y administra el acceso al sistema.
+              Administra las cuentas, los datos de acceso y los permisos según tu rol.
               Las operaciones quedan registradas en auditoría.
             </p>
           </div>
@@ -294,7 +462,11 @@ const [usuarios, setUsuarios] = useState<Usuario[]>([]);
 
       <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
-          { titulo: soloCajeros ? "Cajeros registrados" : "Cuentas visibles", valor: resumen.total, detalle: soloCajeros ? "Personal de caja" : "Cajeros y administradores" },
+          {
+            titulo: soloCajeros ? "Cajeros registrados" : "Cuentas visibles",
+            valor: resumen.total,
+            detalle: soloCajeros ? "Personal de caja" : "Clientes y personal",
+          },
           { titulo: "Activas", valor: resumen.activos, detalle: "Acceso habilitado" },
           { titulo: "Pendientes", valor: resumen.pendientes, detalle: "Esperando confirmación" },
           { titulo: "Desactivadas", valor: resumen.suspendidos, detalle: "Acceso suspendido" },
@@ -313,11 +485,10 @@ const [usuarios, setUsuarios] = useState<Usuario[]>([]);
             Nueva cuenta
           </p>
           <h2 className="mt-1 text-xl font-bold text-slate-900">
-            {soloCajeros ? "Registrar cajero" : "Crear usuario del personal"}
+            {soloCajeros ? "Registrar cajero" : "Crear cuenta"}
           </h2>
           <p className="mt-2 text-sm leading-6 text-slate-500">
-            Establece una contraseña para la cuenta. Una vez creada, el usuario podrá
-            iniciar sesión inmediatamente con su correo electrónico.
+            Establece una contraseña inicial. La cuenta podrá iniciar sesión con el correo y la contraseña asignados.
           </p>
         </div>
 
@@ -361,7 +532,7 @@ const [usuarios, setUsuarios] = useState<Usuario[]>([]);
           </label>
 
           <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-slate-700">Contraseña</span>
+            <span className="mb-1.5 block text-sm font-medium text-slate-700">Contraseña inicial</span>
             <input
               required
               type="password"
@@ -398,6 +569,7 @@ const [usuarios, setUsuarios] = useState<Usuario[]>([]);
                 onChange={(e) => setRolNuevo(e.target.value as RolGestionable)}
                 className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
               >
+                <option value="cliente">Cliente</option>
                 <option value="cajero">Cajero</option>
                 <option value="administrador">Administrador</option>
               </select>
@@ -424,7 +596,7 @@ const [usuarios, setUsuarios] = useState<Usuario[]>([]);
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
           <div>
             <p className="text-xs font-bold uppercase tracking-wider text-cyan-700">
-              Directorio del personal
+              Directorio de cuentas
             </p>
             <h2 className="mt-1 text-xl font-bold text-slate-900">
               Cuentas registradas
@@ -445,7 +617,7 @@ const [usuarios, setUsuarios] = useState<Usuario[]>([]);
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             placeholder="Buscar por nombre, correo o teléfono"
-            className="min-w-0 rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100 md:col-span-1"
+            className="min-w-0 rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
           />
 
           <select
@@ -454,6 +626,7 @@ const [usuarios, setUsuarios] = useState<Usuario[]>([]);
             className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-cyan-600"
           >
             <option value="todos">{soloCajeros ? "Todos los cajeros" : "Todos los roles"}</option>
+            {esSuperusuario && !soloCajeros && <option value="cliente">Clientes</option>}
             {esSuperusuario && !soloCajeros && <option value="administrador">Administradores</option>}
             <option value="cajero">Cajeros</option>
           </select>
@@ -502,25 +675,43 @@ const [usuarios, setUsuarios] = useState<Usuario[]>([]);
                 </div>
 
                 <div className="flex shrink-0 flex-wrap gap-2">
+                  <button
+                    type="button"
+                    disabled={usuarioProcesado === usuario.id || guardando}
+                    onClick={() => iniciarEdicion(usuario)}
+                    className="rounded-lg border border-cyan-300 px-3 py-2 text-xs font-semibold text-cyan-800 transition hover:bg-cyan-50 disabled:opacity-50"
+                  >
+                    Editar / contraseña
+                  </button>
+
                   {usuario.estado === "suspendido" ? (
                     <button
                       type="button"
-                      disabled={usuarioProcesado === usuario.id}
+                      disabled={usuarioProcesado === usuario.id || guardando}
                       onClick={() => void cambiarEstado(usuario, "reactivar")}
                       className="rounded-lg border border-emerald-300 px-3 py-2 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-50 disabled:opacity-50"
                     >
-                      {usuarioProcesado === usuario.id ? "Procesando..." : "Reactivar cuenta"}
+                      {usuarioProcesado === usuario.id ? "Procesando..." : "Reactivar"}
                     </button>
                   ) : (
                     <button
                       type="button"
-                      disabled={usuarioProcesado === usuario.id}
+                      disabled={usuarioProcesado === usuario.id || guardando}
                       onClick={() => void cambiarEstado(usuario, "desactivar")}
                       className="rounded-lg border border-rose-300 px-3 py-2 text-xs font-semibold text-rose-700 transition hover:bg-rose-50 disabled:opacity-50"
                     >
-                      {usuarioProcesado === usuario.id ? "Procesando..." : "Desactivar cuenta"}
+                      {usuarioProcesado === usuario.id ? "Procesando..." : "Desactivar"}
                     </button>
                   )}
+
+                  <button
+                    type="button"
+                    disabled={usuarioProcesado === usuario.id || guardando}
+                    onClick={() => void eliminarUsuario(usuario)}
+                    className="rounded-lg border border-red-300 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-50 disabled:opacity-50"
+                  >
+                    Eliminar
+                  </button>
                 </div>
               </article>
             ))
@@ -532,6 +723,146 @@ const [usuarios, setUsuarios] = useState<Usuario[]>([]);
           Las cuentas desactivadas conservan su historial y sus registros de auditoría.
         </p>
       </section>
+
+      {editando && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950/60 p-4">
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="titulo-edicion-usuario"
+            className="my-auto w-full max-w-2xl rounded-2xl bg-white p-5 shadow-2xl sm:p-7"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-cyan-700">
+                  Gestión de cuenta
+                </p>
+                <h2 id="titulo-edicion-usuario" className="mt-1 text-xl font-bold text-slate-900">
+                  {editando.nombre}
+                </h2>
+                <p className="mt-1 text-sm text-slate-500">
+                  Rol: {editando.rol_nombre || editando.rol}. El rol no se modifica desde esta pantalla.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={cerrarEdicion}
+                disabled={guardando}
+                aria-label="Cerrar"
+                className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100 disabled:opacity-50"
+              >
+                Cerrar
+              </button>
+            </div>
+
+            <form onSubmit={guardarEdicion} className="mt-6 grid gap-4 sm:grid-cols-2">
+              <label className="block">
+                <span className="mb-1.5 block text-sm font-medium text-slate-700">Nombre completo</span>
+                <input
+                  required
+                  minLength={2}
+                  maxLength={100}
+                  value={nombreEdicion}
+                  onChange={(e) => setNombreEdicion(e.target.value)}
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
+                />
+              </label>
+
+              <label className="block">
+                <span className="mb-1.5 block text-sm font-medium text-slate-700">Correo electrónico</span>
+                <input
+                  required
+                  type="email"
+                  maxLength={254}
+                  value={emailEdicion}
+                  onChange={(e) => setEmailEdicion(e.target.value)}
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
+                />
+              </label>
+
+              <label className="block sm:col-span-2">
+                <span className="mb-1.5 block text-sm font-medium text-slate-700">Teléfono</span>
+                <input
+                  type="tel"
+                  maxLength={30}
+                  value={telefonoEdicion}
+                  onChange={(e) => setTelefonoEdicion(e.target.value)}
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
+                />
+              </label>
+
+              <div className="flex flex-wrap gap-2 sm:col-span-2">
+                <button
+                  type="submit"
+                  disabled={guardando}
+                  className="rounded-xl bg-[#0c637b] px-5 py-3 text-sm font-semibold text-white hover:bg-[#084e63] disabled:opacity-50"
+                >
+                  {guardando ? "Guardando..." : "Guardar cambios"}
+                </button>
+                <button
+                  type="button"
+                  onClick={cerrarEdicion}
+                  disabled={guardando}
+                  className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+
+            <div className="my-6 border-t border-slate-200" />
+
+            <form onSubmit={cambiarPassword} className="space-y-4">
+              <div>
+                <h3 className="font-semibold text-slate-900">Cambiar contraseña</h3>
+                <p className="mt-1 text-sm text-slate-500">
+                  La nueva contraseña permitirá iniciar sesión con el correo actual de la cuenta.
+                </p>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="block">
+                  <span className="mb-1.5 block text-sm font-medium text-slate-700">Nueva contraseña</span>
+                  <input
+                    type="password"
+                    autoComplete="new-password"
+                    minLength={8}
+                    maxLength={72}
+                    required
+                    value={passwordNuevo}
+                    onChange={(e) => setPasswordNuevo(e.target.value)}
+                    placeholder="Mínimo 8 caracteres"
+                    className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
+                  />
+                </label>
+
+                <label className="block">
+                  <span className="mb-1.5 block text-sm font-medium text-slate-700">Confirmar contraseña</span>
+                  <input
+                    type="password"
+                    autoComplete="new-password"
+                    minLength={8}
+                    maxLength={72}
+                    required
+                    value={confirmacionPasswordNueva}
+                    onChange={(e) => setConfirmacionPasswordNueva(e.target.value)}
+                    placeholder="Repite la contraseña"
+                    className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
+                  />
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                disabled={guardando}
+                className="rounded-xl border border-cyan-700 px-5 py-3 text-sm font-semibold text-cyan-800 hover:bg-cyan-50 disabled:opacity-50"
+              >
+                {guardando ? "Actualizando..." : "Actualizar contraseña"}
+              </button>
+            </form>
+          </section>
+        </div>
+      )}
 
       {esSuperusuario && !soloCajeros && (
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">

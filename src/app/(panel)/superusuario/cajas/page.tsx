@@ -67,6 +67,22 @@ export default async function PaginaCajas() {
   ]);
 
   const nombres = new Map((perfiles ?? []).map((perfil) => [perfil.id, perfil.nombre]));
+  const idsSinPerfil = idsUsuarios.filter((id) => !nombres.has(id));
+
+  if (idsSinPerfil.length > 0) {
+    const { data: identidadesArchivadas, error: errorIdentidades } = await admin
+      .from("identidades_usuarios_eliminados")
+      .select("usuario_id, nombre")
+      .in("usuario_id", idsSinPerfil);
+
+    if (errorIdentidades) {
+      throw new Error("No fue posible consultar las identidades históricas de las cajas.");
+    }
+
+    for (const identidad of identidadesArchivadas ?? []) {
+      nombres.set(identidad.usuario_id, identidad.nombre);
+    }
+  }
   const movimientosPorCaja = new Map<string, typeof movimientos>();
   for (const movimiento of movimientos ?? []) {
     const lista = movimientosPorCaja.get(movimiento.caja_id) ?? [];

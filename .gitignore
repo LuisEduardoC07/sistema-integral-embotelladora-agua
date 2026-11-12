@@ -39,3 +39,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Respaldos locales y archivos temporales
+backups/
+respaldo-*/
+*.backup*
+revision-*.txt
+
+# Respaldos y diagnósticos locales de Supabase
+supabase/backups/
+supabase/diagnostico_permisos_pos.sql
+supabase/verificar_estado_remoto.sql
+supabase/verificar_integracion_pos.sql

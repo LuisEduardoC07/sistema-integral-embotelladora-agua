@@ -1011,3 +1011,296 @@ textarea.campo { resize: vertical; }
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* ---------- Pregunta de impresion del comprobante ---------- */
+.modalImpresion {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgb(5 20 43 / 58%);
+}
+
+.modalImpresionContenido {
+  width: min(100%, 420px);
+  border: 1px solid var(--linea);
+  border-radius: 16px;
+  padding: 24px;
+  background: #fff;
+  box-shadow: 0 20px 60px rgb(5 20 43 / 24%);
+}
+
+.modalImpresionContenido h2 {
+  margin: 0 0 10px;
+  color: var(--marino);
+  font-size: 19px;
+}
+
+.modalImpresionContenido p {
+  margin: 0;
+  color: var(--apagado);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.modalImpresionAcciones {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.modalImpresionAcciones button {
+  min-height: 42px;
+  border: 1px solid var(--linea);
+  border-radius: 9px;
+  padding: 0 15px;
+  background: #fff;
+  color: var(--marino);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modalImpresionAcciones button:first-child {
+  border-color: var(--azul);
+  background: var(--azul);
+  color: #fff;
+}
+
+.modalImpresionAcciones button:hover {
+  filter: brightness(.96);
+}
+
+/* ---------- Escritorio compacto: referencia 1280 x 720 ---------- */
+@media (min-width: 1051px) and (max-height: 850px) {
+  .areaTrabajo {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 350px);
+    gap: 12px;
+  }
+
+  .panelVenta {
+    position: sticky;
+    top: 72px;
+    height: calc(100vh - 90px);
+    max-height: calc(100vh - 90px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    gap: 9px;
+    padding-bottom: 0;
+    scrollbar-gutter: stable;
+  }
+
+  .listaCarrito {
+    max-height: clamp(90px, 20vh, 145px);
+    min-height: 70px;
+  }
+
+  .tarjetaCabecera {
+    gap: 8px;
+    padding: 9px 12px;
+  }
+
+  .tarjetaCabecera h2 {
+    font-size: 14px;
+  }
+
+  .tarjetaCuerpo {
+    gap: 6px;
+    padding: 9px 12px;
+  }
+
+  .pagoFila {
+    gap: 6px;
+  }
+
+  .metodos {
+    gap: 6px;
+  }
+
+  .metodo {
+    min-height: 38px;
+    gap: 3px;
+    padding: 5px 3px;
+    font-size: 10px;
+  }
+
+  .totales {
+    gap: 6px;
+    padding: 9px 12px;
+  }
+
+  .totales .totalFinal {
+    padding-top: 7px;
+    font-size: 14px;
+  }
+
+  .totales .totalFinal strong {
+    font-size: 24px;
+  }
+
+  .estadoPagos {
+    gap: 5px;
+    margin: 0 12px 3px;
+    padding: 7px 9px;
+  }
+
+  .estadoPagos > div {
+    font-size: 12px;
+  }
+
+  .cobro {
+    position: sticky;
+    bottom: 0;
+    z-index: 6;
+    flex-shrink: 0;
+    margin-top: auto;
+    border-top: 1px solid var(--linea);
+    padding: 9px 12px 11px;
+    background: #fff;
+    box-shadow: 0 -6px 16px rgb(10 42 92 / 8%);
+  }
+
+  .botonCobrar {
+    min-height: 46px;
+    font-size: 14px;
+  }
+
+  .notaCobro {
+    font-size: 11px;
+  }
+}
+
+@media print {
+  .modalImpresion {
+    display: none !important;
+  }
+}
+/* ==========================================================
+   AQUACONTROL - DISTRIBUCION DEFINITIVA DEL PUNTO DE VENTA
+   Escritorio: catalogo izquierdo + panel derecho apilado.
+   Tablet y movil: contenido en una sola columna.
+   ========================================================== */
+
+.resumen {
+  min-width: 0;
+}
+
+/* Escritorio */
+@media screen and (min-width: 1051px) {
+  .areaTrabajo {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 380px);
+    grid-template-rows: auto;
+    align-items: start;
+    align-content: start;
+    gap: 16px;
+  }
+
+  .areaTrabajo > .catalogo {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    min-width: 0;
+    align-self: start;
+  }
+
+  .areaTrabajo > .panelVenta {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    max-height: none;
+    flex-direction: column;
+    align-self: start;
+    gap: 12px;
+    overflow: visible;
+    padding: 0;
+  }
+
+  .panelVenta > section {
+    width: 100%;
+    min-width: 0;
+    flex: 0 0 auto;
+  }
+
+  .panelVenta > .resumen {
+    min-width: 0;
+  }
+
+  .panelVenta .listaCarrito {
+    max-height: min(36vh, 340px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+/* Tablet y pantallas estrechas */
+@media screen and (max-width: 1050px) {
+  .areaTrabajo {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    gap: 16px;
+  }
+
+  .areaTrabajo > .catalogo,
+  .areaTrabajo > .panelVenta {
+    grid-column: 1;
+    grid-row: auto;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .areaTrabajo > .panelVenta {
+    position: static;
+    display: flex;
+    height: auto;
+    max-height: none;
+    flex-direction: column;
+    gap: 12px;
+    overflow: visible;
+    padding: 0;
+  }
+
+  .panelVenta > section {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .panelVenta .listaCarrito {
+    max-height: 320px;
+    overflow-y: auto;
+  }
+}
+
+/* Moviles */
+@media screen and (max-width: 650px) {
+  .areaTrabajo {
+    gap: 14px;
+  }
+
+  .panelVenta {
+    gap: 12px;
+  }
+
+  .panelVenta :is(input, select, textarea) {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 40px;
+  }
+
+  .panelVenta .metodos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

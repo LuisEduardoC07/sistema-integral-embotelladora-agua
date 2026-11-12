@@ -1,0 +1,71 @@
+﻿.contenedor{display:flex;flex-direction:column;gap:22px;color:#17243b}
+.encabezado{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.etiqueta{font-size:10px;font-weight:800;letter-spacing:.15em;color:#1682b8}
+.encabezado h1{margin:5px 0;font-size:27px;font-weight:800;color:#102b52}
+.encabezado p,.tituloTabla p,.modalEncabezado p{margin:4px 0 0;color:#718096;font-size:13px}
+.filtros{display:flex;align-items:end;flex-wrap:wrap;gap:12px;padding:17px;background:white;border:1px solid #e3eaf2;border-radius:15px}
+.filtros label{display:flex;flex-direction:column;gap:6px;min-width:135px;color:#52647b;font-size:11px;font-weight:700}
+.filtros input,.filtros select{height:39px;min-width:0;padding:0 10px;border:1px solid #dce4ed;border-radius:8px;background:#fff;color:#24364d;font-size:12px}
+.filtros .busqueda{flex:1;min-width:190px}
+.botonPrimario,.botonSecundario,.botonTexto{height:39px;padding:0 15px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer}
+.botonPrimario{border:1px solid #1266a8;background:#1266a8;color:white}
+.botonSecundario{border:1px solid #d8e1eb;background:white;color:#31516f}
+.botonTexto{border:0;background:transparent;color:#65788e}
+.botonPrimario:disabled,.botonSecundario:disabled{opacity:.5;cursor:not-allowed}
+.tarjetas{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.tarjeta{display:flex;flex-direction:column;gap:8px;padding:18px;background:white;border:1px solid #e4ebf2;border-radius:14px}
+.tarjeta span{font-size:12px;color:#718096;font-weight:600}
+.tarjeta strong{font-size:25px;color:#102e55;font-weight:800}
+.tarjeta small{font-size:11px;color:#1682b8}
+.graficos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.panelGrafico,.panelTabla{min-width:0;padding:19px;background:white;border:1px solid #e3eaf2;border-radius:15px}
+.panelGrafico h2,.panelTabla h2{margin:0 0 17px;color:#17365d;font-size:15px;font-weight:800}
+.barras{display:flex;align-items:stretch;gap:10px;min-height:190px;overflow-x:auto;padding-top:8px}
+.barraItem{display:flex;flex:1;min-width:65px;flex-direction:column;align-items:center;justify-content:end;gap:7px}
+.barraFondo{display:flex;align-items:end;width:100%;height:112px;overflow:hidden;border-radius:6px 6px 0 0;background:#f0f5fa}
+.barra{width:100%;min-height:3px;border-radius:6px 6px 0 0;background:linear-gradient(180deg,#39a5d8,#1766a7)}
+.barraItem strong{font-size:10px;color:#31516f}
+.barraItem span{font-size:10px;color:#718096;white-space:nowrap}
+.listaBarras{display:flex;flex-direction:column;gap:17px}
+.filaBarra>div:first-child{display:flex;justify-content:space-between;gap:10px;margin-bottom:7px;font-size:11px}
+.filaBarra span{color:#53677e}
+.filaBarra strong{color:#183b64;white-space:nowrap}
+.progreso{height:8px;overflow:hidden;border-radius:10px;background:#edf2f7}
+.progreso span{display:block;height:100%;min-width:2px;border-radius:10px;background:#2184bd}
+.vacioGrafico{padding:35px 5px;text-align:center;color:#8795a7;font-size:12px}
+.tituloTabla{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.tituloTabla h2{margin:0}
+.tituloTabla>span{font-size:11px;color:#718096}
+.tablaScroll{width:100%;overflow-x:auto}
+.tablaScroll table{width:100%;border-collapse:collapse;text-align:left;white-space:nowrap}
+.tablaScroll th{padding:12px 11px;background:#f5f8fb;color:#687c92;font-size:10px;text-transform:uppercase;letter-spacing:.05em}
+.tablaScroll td{padding:13px 11px;border-bottom:1px solid #edf1f5;color:#43566d;font-size:11px}
+.total{font-weight:800;color:#173e68!important}
+.estadoOk,.estadoAnulado{display:inline-block;padding:5px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.estadoOk{background:#e8f7ef;color:#187446}
+.estadoAnulado{background:#fff0ef;color:#b83d37}
+.enlaceDetalle{border:0;background:transparent;color:#0879b5;font-size:11px;font-weight:700;cursor:pointer}
+.sinDatos{padding:30px!important;text-align:center;color:#8492a3!important}
+.paginacion{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:15px}
+.paginacion span{font-size:11px;color:#718096}
+.error{padding:13px 15px;border:1px solid #f2c8c5;border-radius:10px;background:#fff3f2;color:#a52e28;font-size:13px}
+.modalFondo{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;overflow-y:auto;padding:22px;background:#07182dcc}
+.modal{width:min(760px,100%);max-height:90vh;overflow-y:auto;padding:24px;background:white;border-radius:17px;box-shadow:0 25px 80px #0004}
+.modalEncabezado{display:flex;justify-content:space-between;gap:15px;margin-bottom:20px}
+.modalEncabezado h2{margin:5px 0;color:#14365e;font-size:22px;font-weight:800}
+.cerrarModal{width:35px;height:35px;border:0;border-radius:9px;background:#eef3f8;color:#3e5874;font-size:25px;cursor:pointer}
+.datosVenta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:22px}
+.datosVenta p{display:flex;flex-direction:column;gap:4px;margin:0;padding:11px;background:#f6f9fc;border-radius:9px}
+.datosVenta span,.resumenImportes span{font-size:10px;color:#7b8a9d}
+.datosVenta strong{font-size:12px;color:#294765}
+.modal h3{margin:20px 0 10px;color:#1b3e65;font-size:13px;font-weight:800}
+.listaPagos{display:flex;flex-direction:column;gap:8px}
+.listaPagos div{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:10px;border-bottom:1px solid #edf1f5;font-size:11px;color:#52677e}
+.resumenImportes{width:min(330px,100%);margin:18px 0 0 auto}
+.resumenImportes p{display:flex;justify-content:space-between;gap:12px;margin:0;padding:7px 0}
+.resumenImportes strong{font-size:12px;color:#294765}
+.resumenImportes .totalFinal{margin-top:5px;padding-top:12px;border-top:1px solid #dce5ee}
+.totalFinal strong{font-size:17px;color:#0d5f9b}
+.motivoAnulacion{padding:12px;border-radius:8px;background:#fff3f2;color:#a52e28;font-size:12px}
+@media(max-width:900px){.tarjetas{grid-template-columns:repeat(2,minmax(0,1fr))}.filtros label{flex:1}.filtros .busqueda{flex-basis:100%}}
+@media(max-width:650px){.encabezado{align-items:flex-start;flex-direction:column}.encabezado h1{font-size:23px}.graficos{grid-template-columns:1fr}.tarjetas{gap:9px}.tarjeta{padding:13px}.tarjeta strong{font-size:21px}.filtros label{min-width:calc(50% - 8px)}.filtros .busqueda{min-width:100%}.tituloTabla{align-items:flex-start;flex-direction:column}.paginacion{align-items:flex-start;flex-direction:column}.modal{padding:17px}.datosVenta{grid-template-columns:1fr 1fr}}

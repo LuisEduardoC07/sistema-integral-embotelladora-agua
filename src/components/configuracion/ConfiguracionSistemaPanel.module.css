@@ -1,0 +1,195 @@
+.contenedor {
+  max-width: 1100px;
+  margin: 0 auto;
+  color: #172033;
+}
+
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 26px;
+}
+
+.encabezado h1 {
+  margin: 7px 0;
+  font-size: clamp(25px, 4vw, 32px);
+  font-weight: 750;
+  letter-spacing: -0.04em;
+}
+
+.encabezado p,
+.seccion > p {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.eyebrow {
+  color: #0284c7;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .15em;
+}
+
+.seccion {
+  padding: 25px;
+  margin-bottom: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 17px;
+  background: white;
+  box-shadow: 0 3px 12px rgb(15 23 42 / 3%);
+}
+
+.seccion h2 {
+  margin: 0 0 6px;
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.seccion > p {
+  margin: 0 0 22px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 19px;
+}
+
+.campo {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campo span {
+  color: #334155;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.campo input,
+.campo select {
+  width: 100%;
+  min-height: 43px;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  background: white;
+  color: #172033;
+  font-size: 14px;
+  outline: none;
+}
+
+.campo input:focus,
+.campo select:focus {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgb(2 132 199 / 12%);
+}
+
+.interruptor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 23px;
+  padding: 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 11px;
+}
+
+.interruptor input {
+  width: 18px;
+  height: 18px;
+  accent-color: #0284c7;
+}
+
+.interruptor span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.interruptor strong {
+  font-size: 13px;
+}
+
+.interruptor small,
+.pie small {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.pie {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 2px 25px;
+}
+
+.pie button {
+  min-height: 44px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 10px;
+  background: #075985;
+  color: white;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.pie button:hover {
+  background: #0369a1;
+}
+
+.pie button:disabled {
+  cursor: wait;
+  opacity: .6;
+}
+
+.error,
+.exito,
+.estado {
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.error {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.exito {
+  border: 1px solid #bbf7d0;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.estado {
+  background: white;
+  color: #475569;
+}
+
+@media (max-width: 650px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .seccion {
+    padding: 18px;
+  }
+
+  .pie {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .pie button {
+    width: 100%;
+  }
+}

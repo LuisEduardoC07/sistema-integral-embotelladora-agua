@@ -1,15 +1,10 @@
-﻿export const instant = false;
+export const instant = false;
 
 import { protegerPanel } from "@/lib/seguridad/proteger-panel";
-import { ModuloSuperusuario } from "@/components/panel/superusuario/ModuloSuperusuario";
+import { GestionUsuarios } from "@/components/usuarios/GestionUsuarios";
 
-export default async function PaginaModulo() {
+export default async function PaginaUsuariosSuperusuario() {
   await protegerPanel("superusuario");
 
-  return (
-    <ModuloSuperusuario
-      titulo="Usuarios y cuentas"
-      descripcion="Consulta y administración de las cuentas de usuario del sistema."
-    />
-  );
+  return <GestionUsuarios rolActual="superusuario" />;
 }

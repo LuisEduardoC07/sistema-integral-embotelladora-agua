@@ -1,15 +1,12 @@
-﻿export const instant = false;
-
+import { connection } from "next/server";
 import { protegerPanel } from "@/lib/seguridad/proteger-panel";
-import { ModuloSuperusuario } from "@/components/panel/superusuario/ModuloSuperusuario";
+import { ConfiguracionSistemaPanel } from "@/components/configuracion/ConfiguracionSistemaPanel";
 
-export default async function PaginaModulo() {
+export const instant = false;
+
+export default async function PaginaConfiguracion() {
+  await connection();
   await protegerPanel("superusuario");
 
-  return (
-    <ModuloSuperusuario
-      titulo="Configuración"
-      descripcion="Administración de los parámetros generales de AquaControl."
-    />
-  );
+  return <ConfiguracionSistemaPanel />;
 }

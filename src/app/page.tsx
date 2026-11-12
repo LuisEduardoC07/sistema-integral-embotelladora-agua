@@ -1,9 +1,16 @@
-﻿import Link from "next/link";
+import Link from "next/link";
+import { Suspense } from "react";
+import CatalogoPublico from "@/components/productos/CatalogoPublico";
+import Nosotros from "@/components/publico/Nosotros";
+import Ubicaciones from "@/components/publico/Ubicaciones";
+import Contacto from "@/components/publico/Contacto";
 
 const enlaces = [
   { label: "Inicio", href: "/" },
   { label: "Productos", href: "/#productos" },
   { label: "Nosotros", href: "/#nosotros" },
+  { label: "Ubicación", href: "/#ubicacion" },
+  { label: "Contáctanos", href: "/#contacto" },
 ];
 
 export default function PaginaPrincipal() {
@@ -105,52 +112,35 @@ export default function PaginaPrincipal() {
         </div>
       </section>
 
-      <section id="productos" className="scroll-mt-28 bg-slate-50 px-6 py-20">
-        <div className="mx-auto max-w-7xl">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs font-bold tracking-[0.2em] text-cyan-700">NUESTROS SERVICIOS</p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">Todo lo que necesitas en un solo lugar</h2>
-            <p className="mt-4 text-sm leading-7 text-slate-500">
-              Accede a nuestra tienda y gestiona tus solicitudes desde tu cuenta.
-            </p>
-          </div>
+      <Suspense
+        fallback={
+          <section className="bg-slate-50 px-6 py-20">
+            <div className="mx-auto max-w-7xl text-center text-sm text-slate-500">
+              Cargando catálogo de productos...
+            </div>
+          </section>
+        }
+      >
+        <CatalogoPublico />
+      </Suspense>
+      <Nosotros />
 
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {[
-              { numero: "01", titulo: "Catálogo de productos", texto: "Consulta los productos disponibles y conoce sus opciones." },
-              { numero: "02", titulo: "Pedidos y entregas", texto: "Solicita tus productos e indica dónde y cuándo deseas recibirlos." },
-              { numero: "03", titulo: "Tu cuenta", texto: "Consulta tus solicitudes y mantén actualizados tus datos de contacto." },
-            ].map((item) => (
-              <article key={item.numero} className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-50 text-sm font-bold text-cyan-700">
-                  {item.numero}
-                </span>
-                <h3 className="mt-6 text-lg font-bold text-slate-900">{item.titulo}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-500">{item.texto}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Ubicaciones />
 
-      <section id="nosotros" className="scroll-mt-28 px-6 py-20">
-        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 rounded-3xl bg-[#142b3b] p-8 text-white sm:p-12 md:flex-row md:items-center">
-          <div className="max-w-2xl">
-            <p className="text-xs font-bold tracking-[0.2em] text-cyan-300">AQUACONTROL</p>
-            <h2 className="mt-3 text-2xl font-bold sm:text-3xl">Una experiencia sencilla para gestionar tus pedidos.</h2>
-            <p className="mt-4 text-sm leading-7 text-slate-300">
-              Crea tu cuenta para acceder a la tienda y solicitar tus entregas.
-            </p>
-          </div>
-          <Link href="/registro" className="shrink-0 rounded-xl bg-cyan-400 px-6 py-3.5 text-sm font-bold text-[#142b3b] transition hover:bg-cyan-300">
-            Comenzar ahora
-          </Link>
-        </div>
-      </section>
+      <Contacto />
 
-      <footer className="border-t border-slate-200 bg-white px-6 py-7">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
-          <p className="text-sm font-bold text-slate-700">AquaControl</p>
+      <footer className="border-t border-slate-200 bg-white px-6 py-8">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
+          <div>
+            <p className="text-lg font-extrabold text-slate-800">AquaControl</p>
+            <p className="mt-1 text-xs text-slate-500">Agua de calidad, confianza en cada entrega.</p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-5 text-xs font-medium text-slate-500">
+            <Link href="/#nosotros" className="hover:text-cyan-600">Nosotros</Link>
+            <Link href="/#productos" className="hover:text-cyan-600">Productos</Link>
+            <Link href="/#ubicacion" className="hover:text-cyan-600">Ubicación</Link>
+            <Link href="/#contacto" className="hover:text-cyan-600">Contáctanos</Link>
+          </div>
           <p className="text-xs text-slate-400">© 2026 AquaControl. Todos los derechos reservados.</p>
         </div>
       </footer>

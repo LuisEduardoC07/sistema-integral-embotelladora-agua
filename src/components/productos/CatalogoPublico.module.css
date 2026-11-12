@@ -1,0 +1,165 @@
+.seccion {
+  scroll-margin-top: 7rem;
+  background: #f8fafc;
+  padding: 5rem 1.5rem;
+}
+
+.contenedor {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.encabezado {
+  max-width: 42rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.etiqueta {
+  color: #0e7490;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+}
+
+.titulo {
+  margin-top: 0.75rem;
+  color: #0f172a;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+.descripcion {
+  margin-top: 1rem;
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.tarjeta {
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
+  background: #fff;
+  box-shadow: 0 3px 12px rgb(15 23 42 / 4%);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.tarjeta:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgb(15 23 42 / 9%);
+}
+
+.imagenContenedor {
+  display: flex;
+  aspect-ratio: 4 / 3;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #ecfeff;
+}
+
+.imagen {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.imagenVacia {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  color: #0891b2;
+  background: linear-gradient(145deg, #ecfeff, #cffafe);
+}
+
+.detalle {
+  padding: 1.35rem;
+}
+
+.nombre {
+  color: #0f172a;
+  font-size: 1.1rem;
+  font-weight: 750;
+}
+
+.descripcionProducto {
+  min-height: 3rem;
+  margin-top: 0.55rem;
+  color: #64748b;
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+.pieTarjeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.precio {
+  color: #0e7490;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.unidad {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.estado {
+  max-width: 42rem;
+  margin: 3rem auto 0;
+  padding: 2.5rem 1.5rem;
+  border: 1px dashed #cbd5e1;
+  border-radius: 1.25rem;
+  background: white;
+  text-align: center;
+}
+
+.estado h3 {
+  color: #0f172a;
+  font-size: 1.1rem;
+  font-weight: 750;
+}
+
+.estado p {
+  margin-top: 0.6rem;
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .seccion {
+    padding: 3.5rem 1rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+}

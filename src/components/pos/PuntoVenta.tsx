@@ -50,6 +50,7 @@ interface ComprobantePOS extends ResultadoVentaPOS {
   pagos: {
     metodo: MetodoPagoPOS;
     monto: number;
+    monto_recibido: number;
     referencia: string | null;
   }[];
 }
@@ -133,6 +134,28 @@ export function PuntoVenta() {
   const [error, setError] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [venta, setVenta] = useState<ComprobantePOS | null>(null);
+  const [mostrarPreguntaImpresion, setMostrarPreguntaImpresion] = useState(false);
+  const [imprimirComprobante, setImprimirComprobante] = useState(false);
+
+  useEffect(() => {
+    if (!venta || !imprimirComprobante) return;
+
+    const temporizador = window.setTimeout(() => {
+      window.print();
+    }, 150);
+
+    const finalizarImpresion = () => {
+      setImprimirComprobante(false);
+      setVenta(null);
+    };
+
+    window.addEventListener("afterprint", finalizarImpresion);
+
+    return () => {
+      window.clearTimeout(temporizador);
+      window.removeEventListener("afterprint", finalizarImpresion);
+    };
+  }, [venta, imprimirComprobante]);
 
   async function cargarDatos() {
     try {
@@ -208,27 +231,61 @@ export function PuntoVenta() {
     referencia: pago.referencia.trim() || null,
   }));
 
-  const totalPagadoCentavos = pagos.length === 1
-    ? totalCentavos
-    : pagosCalculados.reduce(
-        (suma, pago) => suma + Math.round(pago.monto * 100),
-        0,
-      );
+  // Los importes no efectivos se aplican íntegramente.
+  const totalNoEfectivoCentavos = pagosCalculados
+    .filter((pago) => pago.metodo !== "efectivo")
+    .reduce(
+      (suma, pago) => suma + Math.round(pago.monto * 100),
+      0,
+    );
 
-  const totalPagado = Number((totalPagadoCentavos / 100).toFixed(2));
+  // En efectivo, el importe introducido representa lo recibido.
+  const efectivoRecibidoCentavos = pagosCalculados
+    .filter((pago) => pago.metodo === "efectivo")
+    .reduce(
+      (suma, pago) => suma + Math.round(pago.monto * 100),
+      0,
+    );
+
+  const excesoNoEfectivo =
+    totalNoEfectivoCentavos > totalCentavos;
+
+  // El efectivo aplicado nunca supera el saldo pendiente.
+  const efectivoAplicadoCentavos = Math.min(
+    efectivoRecibidoCentavos,
+    Math.max(totalCentavos - totalNoEfectivoCentavos, 0),
+  );
+
+  const totalPagadoCentavos =
+    totalNoEfectivoCentavos + efectivoAplicadoCentavos;
+
+  const totalPagado = Number(
+    (totalPagadoCentavos / 100).toFixed(2),
+  );
+
+  const totalRecibidoCentavos =
+    totalNoEfectivoCentavos + efectivoRecibidoCentavos;
+
+  const totalRecibido = Number(
+    (totalRecibidoCentavos / 100).toFixed(2),
+  );
 
   const diferenciaPago = Number(
     ((totalCentavos - totalPagadoCentavos) / 100).toFixed(2),
   );
 
+  const cambioDevueltoCentavos =
+    efectivoRecibidoCentavos - efectivoAplicadoCentavos;
+
+  const cambioDevuelto = Number(
+    (cambioDevueltoCentavos / 100).toFixed(2),
+  );
+
   const pagosInvalidos =
     pagos.length === 0 ||
-    (pagos.length === 1
-      ? totalCentavos <= 0
-      : pagosCalculados.some(
-          (pago) => !Number.isFinite(pago.monto) || pago.monto <= 0,
-        ));
-
+    pagosCalculados.some(
+      (pago) => !Number.isFinite(pago.monto) || pago.monto <= 0,
+    );
   function agregarPago() {
     setPagos((actuales) => {
       if (actuales.length === 1) {
@@ -383,10 +440,13 @@ export function PuntoVenta() {
       return;
     }
 
-    if (diferenciaPago !== 0) {
-      setError(
-        `El pago no coincide con el total. Diferencia: ${dinero(diferenciaPago)}.`,
-      );
+    if (excesoNoEfectivo) {
+      setError("Los pagos con tarjeta, transferencia u otros métodos no pueden superar el total de la venta.");
+      return;
+    }
+
+    if (diferenciaPago > 0) {
+      setError(`Falta pagar ${dinero(diferenciaPago)}.`);
       return;
     }
 
@@ -395,12 +455,33 @@ export function PuntoVenta() {
     setMensaje("");
 
     try {
-      const pagosVenta = pagos.map((pago) => ({
-        metodo: pago.metodo,
-        monto: pagos.length === 1 ? total : Number((Math.round(Number(pago.monto) * 100) / 100).toFixed(2)),
-        referencia: pago.referencia.trim() || null,
-      }));
+      // Los pagos no efectivos se registran por su importe aplicado.
+      const pagosNoEfectivos = pagosCalculados
+        .filter((pago) => pago.metodo !== "efectivo")
+        .map((pago) => ({
+          metodo: pago.metodo,
+          monto: pago.monto,
+          monto_recibido: pago.monto,
+          referencia: pago.referencia,
+        }));
 
+      // Se consolida el efectivo para registrar correctamente
+      // cuánto recibió el cajero y cuánto se aplicó a la venta.
+      const pagosVenta = [
+        ...pagosNoEfectivos,
+        ...(efectivoRecibidoCentavos > 0
+          ? [{
+              metodo: "efectivo" as const,
+              monto: Number(
+                (efectivoAplicadoCentavos / 100).toFixed(2),
+              ),
+              monto_recibido: Number(
+                (efectivoRecibidoCentavos / 100).toFixed(2),
+              ),
+              referencia: null,
+            }]
+          : []),
+      ];
       const nombreCliente = clienteNombre.trim() || null;
       const notasVenta = observaciones.trim() || null;
 
@@ -443,6 +524,8 @@ export function PuntoVenta() {
         lineas: lineasComprobante,
         pagos: pagosVenta,
       });
+      setImprimirComprobante(false);
+      setMostrarPreguntaImpresion(true);
 
       setCarrito({});
       setClienteNombre("");
@@ -639,8 +722,7 @@ export function PuntoVenta() {
                 </div>
               )}
             </section>
-
-            <aside className={styles.panelVenta}>
+            <section className={styles.carritoCatalogo}>
               <section className={styles.tarjeta}>
                 <div className={styles.tarjetaCabecera}>
                   <span className={styles.tarjetaIcono}><Icono nombre="cart" /></span>
@@ -707,6 +789,10 @@ export function PuntoVenta() {
                   )}
                 </div>
               </section>
+            </section>
+
+            <aside className={styles.panelVenta}>
+
 
               <section className={styles.tarjeta}>
                 <div className={styles.tarjetaCabecera}>
@@ -784,11 +870,10 @@ export function PuntoVenta() {
                           type="number"
                           min="0"
                           step="0.01"
-                          value={pagos.length === 1 ? total.toFixed(2) : pago.monto}
+                          value={pago.monto}
                           onChange={(e) => actualizarPago(indice, {
                             monto: e.target.value,
                           })}
-                          readOnly={pagos.length === 1}
                           disabled={procesando}
                         />
 
@@ -841,31 +926,38 @@ export function PuntoVenta() {
                   </div>
                 </div>
 
-                {pagos.length > 1 && (
-                  <div className={styles.estadoPagos}>
-                    <div>
-                      <span>Total pagado</span>
-                      <strong>{dinero(totalPagado)}</strong>
-                    </div>
-                    <div
-                      className={`${styles.diferenciaPagos} ${diferenciaPago === 0 ? styles.pagoCompleto : styles.pagoPendiente}`}
-                    >
-                      <span>
-                        {diferenciaPago === 0
-                          ? "Estado del pago"
-                          : diferenciaPago > 0
-                            ? "Pendiente por pagar"
-                            : "Monto excedido"}
-                      </span>
-                      <strong>
-                        {diferenciaPago === 0
-                          ? "Completo"
-                          : dinero(Math.abs(diferenciaPago))}
-                      </strong>
-                    </div>
+                <div className={styles.estadoPagos}>
+                  <div>
+                    <span>Importe aplicado</span>
+                    <strong>{dinero(totalPagado)}</strong>
                   </div>
-                )}
-
+                  <div>
+                    <span>Total recibido</span>
+                    <strong>{dinero(totalRecibido)}</strong>
+                  </div>
+                  <div
+                    className={`${styles.diferenciaPagos} ${diferenciaPago === 0 ? styles.pagoCompleto : styles.pagoPendiente}`}
+                  >
+                    <span>
+                      {excesoNoEfectivo
+                        ? "Exceso no permitido"
+                        : diferenciaPago > 0
+                          ? "Pendiente por pagar"
+                          : cambioDevuelto > 0
+                            ? "Cambio a devolver"
+                            : "Estado del pago"}
+                    </span>
+                    <strong>
+                      {excesoNoEfectivo
+                        ? "Revisar pagos"
+                        : diferenciaPago > 0
+                          ? dinero(diferenciaPago)
+                          : cambioDevuelto > 0
+                            ? dinero(cambioDevuelto)
+                            : "Completo"}
+                    </strong>
+                  </div>
+                </div>
                 <div className={styles.cobro}>
                   <button
                     type="button"
@@ -876,7 +968,8 @@ export function PuntoVenta() {
                       lineas.length === 0 ||
                       total <= 0 ||
                       pagosInvalidos ||
-                      diferenciaPago !== 0
+                      excesoNoEfectivo ||
+                      diferenciaPago > 0
                     }
                   >
                     {procesando ? "Procesando venta..." : `Cobrar venta ${dinero(total)}`}
@@ -915,7 +1008,42 @@ export function PuntoVenta() {
         </>
       )}
 
-      {venta && (
+      {mostrarPreguntaImpresion && venta && (
+        <div className={styles.modalImpresion} role="presentation">
+          <section
+            className={styles.modalImpresionContenido}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="titulo-pregunta-impresion"
+          >
+            <h2 id="titulo-pregunta-impresion">Venta registrada correctamente</h2>
+            <p>¿Deseas imprimir el comprobante de esta venta?</p>
+            <div className={styles.modalImpresionAcciones}>
+              <button
+                type="button"
+                onClick={() => {
+                  setMostrarPreguntaImpresion(false);
+                  setImprimirComprobante(true);
+                }}
+              >
+                Sí, imprimir
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMostrarPreguntaImpresion(false);
+                  setImprimirComprobante(false);
+                  setVenta(null);
+                }}
+              >
+                No, gracias
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {venta && imprimirComprobante && (
         <section className={styles.recibo}>
           <div className={styles.reciboCabecera}>
             <span className={styles.etiqueta}>Venta completada</span>
@@ -952,6 +1080,12 @@ export function PuntoVenta() {
               <span>Total</span>
               <strong>{dinero(Number(venta.total))}</strong>
             </div>
+            {Number(venta.cambio_devuelto ?? 0) > 0 && (
+              <div>
+                <span>Cambio devuelto</span>
+                <strong>{dinero(Number(venta.cambio_devuelto))}</strong>
+              </div>
+            )}
           </div>
 
           <div className={styles.reciboSeccion}>
@@ -965,6 +1099,12 @@ export function PuntoVenta() {
                     : "Otro"}
                 </span>
                 <strong>{dinero(pago.monto)}</strong>
+                {pago.metodo === "efectivo" &&
+                  pago.monto_recibido > pago.monto && (
+                    <small>
+                      Recibido: {dinero(pago.monto_recibido)}
+                    </small>
+                  )}
                 {pago.referencia && <small>Ref.: {pago.referencia}</small>}
               </div>
             ))}

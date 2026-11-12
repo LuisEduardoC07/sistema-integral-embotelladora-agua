@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/browser";
 import type { RolSistema } from "@/types/usuarios/perfil.types";
@@ -35,18 +35,16 @@ const menus: Record<RolSistema, MenuGroup[]> = {
     {
       title: "OPERACIONES",
       items: [
-        { label: "Pedidos pendientes", icon: "clipboard" },
-        { label: "Cajas", icon: "wallet" },
+        { label: "Pedidos pendientes", icon: "clipboard", href: "/pedidos-pendientes" },
+        { label: "Cajas", icon: "wallet", href: "/superusuario/cajas" },
         { label: "Productos", icon: "package", href: "/productos" },
       ],
     },
     {
       title: "GESTIÃ“N COMERCIAL",
       items: [
-        { label: "Ventas", icon: "shopping" },
-        { label: "Facturas", icon: "receipt" },
-        { label: "Reportes", icon: "chart" },
-        { label: "Cajeros", icon: "users" },
+        { label: "Historial de ventas", icon: "history", href: "/historial-ventas" },
+        { label: "Cajeros", icon: "users", href: "/superusuario/cajeros" },
       ],
     },
     {
@@ -71,7 +69,7 @@ const menus: Record<RolSistema, MenuGroup[]> = {
       items: [
         { label: "Inicio", icon: "home", href: "/administrador" },
         { label: "Punto de venta", icon: "store", href: "/pos" },
-        { label: "Pedidos pendientes", icon: "clipboard" },
+        { label: "Pedidos pendientes", icon: "clipboard", href: "/pedidos-pendientes" },
       ],
     },
     {
@@ -83,10 +81,13 @@ const menus: Record<RolSistema, MenuGroup[]> = {
     {
       title: "GESTIÃ“N COMERCIAL",
       items: [
-        { label: "Ventas", icon: "shopping" },
-        { label: "Facturas", icon: "receipt" },
-        { label: "Reportes", icon: "chart" },
-        { label: "Cajeros", icon: "users" },
+        { label: "Historial de ventas", icon: "history", href: "/historial-ventas" },
+      ],
+    },
+    {
+      title: "ADMINISTRACIÃ“N",
+      items: [
+        { label: "Usuarios y cuentas", icon: "users", href: "/administrador/usuarios" },
       ],
     },
   ],
@@ -96,16 +97,15 @@ const menus: Record<RolSistema, MenuGroup[]> = {
       items: [
         { label: "Inicio", icon: "home", href: "/cajero" },
         { label: "Punto de venta", icon: "store", href: "/pos" },
-        { label: "Pedidos pendientes", icon: "clipboard" },
-        { label: "Mi caja", icon: "wallet" },
+        { label: "Pedidos pendientes", icon: "clipboard", href: "/pedidos-pendientes" },
+        { label: "Mi caja", icon: "wallet", href: "/cajero/caja" },
       ],
     },
     {
       title: "CONSULTAS",
       items: [
         { label: "Productos", icon: "package", href: "/productos" },
-        { label: "Ventas", icon: "shopping" },
-        { label: "Facturas", icon: "receipt" },
+        { label: "Historial de ventas", icon: "history", href: "/historial-ventas" },
       ],
     },
   ],
@@ -114,15 +114,15 @@ const menus: Record<RolSistema, MenuGroup[]> = {
       title: "MI TIENDA",
       items: [
         { label: "Inicio", icon: "home", href: "/cliente" },
-        { label: "CatÃ¡logo", icon: "store" },
-        { label: "Mis pedidos", icon: "clipboard" },
-        { label: "Cotizaciones", icon: "receipt" },
+        { label: "CatÃ¡logo", icon: "store", href: "/cliente" },
+        { label: "Mis pedidos", icon: "clipboard", href: "/cliente/pedidos" },
+        { label: "Cotizaciones", icon: "receipt", href: "/cliente/cotizaciones" },
       ],
     },
     {
       title: "MI CUENTA",
       items: [
-        { label: "Mi perfil", icon: "user" },
+        { label: "Mi perfil", icon: "user", href: "/cliente/perfil" },
       ],
     },
   ],
@@ -249,29 +249,31 @@ export function NavegacionPanel({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const router = useRouter();
   const [menuMovil, setMenuMovil] = useState(false);
   const [cerrando, setCerrando] = useState(false);
   const [error, setError] = useState("");
 
   async function cerrarSesion() {
+    if (cerrando) return;
+
     setCerrando(true);
     setError("");
 
     try {
       const supabase = createClient();
-      const { error: errorAuth } = await supabase.auth.signOut();
+
+      const { error: errorAuth } = await supabase.auth.signOut({
+        scope: "local",
+      });
 
       if (errorAuth) {
-        setError("No fue posible cerrar la sesiÃ³n. IntÃ©ntalo de nuevo.");
-        setCerrando(false);
-        return;
+        throw errorAuth;
       }
 
-      router.replace("/iniciar-sesion");
-      router.refresh();
+      setMenuMovil(false);
+      window.location.replace("/iniciar-sesion");
     } catch {
-      setError("OcurriÃ³ un error al cerrar la sesiÃ³n.");
+      setError("No fue posible cerrar la sesiÃ³n. IntÃ©ntalo de nuevo.");
       setCerrando(false);
     }
   }
@@ -391,7 +393,7 @@ export function NavegacionPanel({
           </div>
         )}
 
-        <main style={{ containerType: "inline-size" }} className="mx-auto w-full max-w-[1500px] p-4 sm:p-6 lg:p-7">
+        <main style={{ containerType: "inline-size" }} className="w-full p-4 sm:p-6 lg:p-7">
           {children}
         </main>
       </div>

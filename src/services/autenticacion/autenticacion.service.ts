@@ -1,4 +1,4 @@
-﻿import { createClient } from "@/lib/supabase/browser";
+import { createClient } from "@/lib/supabase/browser";
 import type {
   DatosInicioSesion,
   DatosRegistro,
@@ -39,10 +39,22 @@ export async function registrarUsuario(
     });
 
     if (error) {
+      const mensajeError = error.message.toLowerCase();
+
+      const correoDuplicado =
+        mensajeError.includes("user already registered") ||
+        mensajeError.includes("already registered") ||
+        mensajeError.includes("email address already") ||
+        mensajeError.includes("already exists");
+
       return {
         exitoso: false,
-        mensaje: "No se pudo completar el registro.",
-        error: error.message,
+        mensaje: correoDuplicado
+          ? "Este correo electrónico ya está registrado."
+          : "No se pudo completar el registro.",
+        error: correoDuplicado
+          ? "Inicia sesión o utiliza otro correo electrónico."
+          : error.message,
         requiereVerificacion: false,
       };
     }
@@ -52,6 +64,20 @@ export async function registrarUsuario(
         exitoso: false,
         mensaje: "No se pudo crear la cuenta.",
         error: "Supabase no devolvió un usuario.",
+        requiereVerificacion: false,
+      };
+    }
+
+    // Supabase devuelve identidades vacías cuando oculta
+    // que el correo ya pertenece a una cuenta confirmada.
+    if (
+      Array.isArray(data.user.identities) &&
+      data.user.identities.length === 0
+    ) {
+      return {
+        exitoso: false,
+        mensaje: "Este correo electrónico ya está registrado.",
+        error: "Inicia sesión o utiliza otro correo electrónico.",
         requiereVerificacion: false,
       };
     }

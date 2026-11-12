@@ -1,15 +1,12 @@
-﻿export const instant = false;
-
+import { connection } from "next/server";
 import { protegerPanel } from "@/lib/seguridad/proteger-panel";
-import { ModuloSuperusuario } from "@/components/panel/superusuario/ModuloSuperusuario";
+import { DiagnosticoMantenimiento } from "@/components/mantenimiento/DiagnosticoMantenimiento";
+
+export const instant = false;
 
 export default async function PaginaModulo() {
+  await connection();
   await protegerPanel("superusuario");
 
-  return (
-    <ModuloSuperusuario
-      titulo="Mantenimiento"
-      descripcion="Herramientas de supervisión y mantenimiento del sistema."
-    />
-  );
+  return <DiagnosticoMantenimiento />;
 }

@@ -36,6 +36,7 @@ export interface ItemVentaPOS {
 export interface PagoVentaPOS {
   metodo: MetodoPagoPOS;
   monto: number;
+  monto_recibido: number;
   referencia?: string | null;
 }
 
@@ -46,6 +47,7 @@ export interface ResultadoVentaPOS {
   impuesto: number;
   total: number;
   estado: string;
+  cambio_devuelto?: number;
 }
 
 export interface ResultadoOperacionPOS {

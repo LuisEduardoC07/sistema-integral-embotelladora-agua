@@ -1,15 +1,11 @@
-﻿export const instant = false;
-
+import { connection } from "next/server";
 import { protegerPanel } from "@/lib/seguridad/proteger-panel";
-import { ModuloSuperusuario } from "@/components/panel/superusuario/ModuloSuperusuario";
+import { GestionAuditoria } from "@/components/auditoria/GestionAuditoria";
 
-export default async function PaginaModulo() {
+
+export default async function PaginaAuditoria() {
+  await connection();
   await protegerPanel("superusuario");
 
-  return (
-    <ModuloSuperusuario
-      titulo="Auditoría"
-      descripcion="Consulta y supervisión del registro de actividades administrativas."
-    />
-  );
+  return <GestionAuditoria />;
 }

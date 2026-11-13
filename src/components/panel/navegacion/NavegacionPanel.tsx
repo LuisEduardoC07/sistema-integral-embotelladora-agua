@@ -41,25 +41,25 @@ const menus: Record<RolSistema, MenuGroup[]> = {
       ],
     },
     {
-      title: "GESTIÃ“N COMERCIAL",
+      title: "GESTIÓN COMERCIAL",
       items: [
         { label: "Historial de ventas", icon: "history", href: "/historial-ventas" },
         { label: "Cajeros", icon: "users", href: "/superusuario/cajeros" },
       ],
     },
     {
-      title: "ADMINISTRACIÃ“N",
+      title: "ADMINISTRACIÓN",
       items: [
         { label: "Usuarios y cuentas", icon: "users", href: "/superusuario/usuarios" },
         { label: "Roles y permisos", icon: "shield", href: "/superusuario/roles-permisos" },
-        { label: "AuditorÃ­a", icon: "history", href: "/superusuario/auditoria" },
+        { label: "Auditoría", icon: "history", href: "/superusuario/auditoria" },
       ],
     },
     {
       title: "SISTEMA",
       items: [
         { label: "Mantenimiento", icon: "settings", href: "/superusuario/mantenimiento" },
-        { label: "ConfiguraciÃ³n", icon: "settings", href: "/superusuario/configuracion" },
+        { label: "Configuración", icon: "settings", href: "/superusuario/configuracion" },
       ],
     },
   ],
@@ -79,13 +79,13 @@ const menus: Record<RolSistema, MenuGroup[]> = {
       ],
     },
     {
-      title: "GESTIÃ“N COMERCIAL",
+      title: "GESTIÓN COMERCIAL",
       items: [
         { label: "Historial de ventas", icon: "history", href: "/historial-ventas" },
       ],
     },
     {
-      title: "ADMINISTRACIÃ“N",
+      title: "ADMINISTRACIÓN",
       items: [
         { label: "Usuarios y cuentas", icon: "users", href: "/administrador/usuarios" },
       ],
@@ -114,7 +114,7 @@ const menus: Record<RolSistema, MenuGroup[]> = {
       title: "MI TIENDA",
       items: [
         { label: "Inicio", icon: "home", href: "/cliente" },
-        { label: "CatÃ¡logo", icon: "store", href: "/cliente" },
+        { label: "Catálogo", icon: "store", href: "/cliente" },
         { label: "Mis pedidos", icon: "clipboard", href: "/cliente/pedidos" },
         { label: "Cotizaciones", icon: "receipt", href: "/cliente/cotizaciones" },
       ],
@@ -201,7 +201,7 @@ function ContenidoMenu({
                 return (
                   <div
                     key={item.label}
-                    title="Este mÃ³dulo estarÃ¡ disponible prÃ³ximamente"
+                    title="Este módulo estará disponible próximamente"
                     className="flex cursor-not-allowed items-center justify-between rounded-xl px-3 py-3 text-sm text-slate-500/80"
                   >
                     <span className="flex items-center gap-3">
@@ -273,7 +273,7 @@ export function NavegacionPanel({
       setMenuMovil(false);
       window.location.replace("/iniciar-sesion");
     } catch {
-      setError("No fue posible cerrar la sesiÃ³n. IntÃ©ntalo de nuevo.");
+      setError("No fue posible cerrar la sesión. Inténtalo de nuevo.");
       setCerrando(false);
     }
   }
@@ -293,7 +293,7 @@ export function NavegacionPanel({
 
         <div className="border-b border-white/10 px-5 py-5">
           <div className="rounded-xl bg-white/5 p-3">
-            <p className="text-[10px] uppercase tracking-wider text-slate-400">SesiÃ³n activa</p>
+            <p className="text-[10px] uppercase tracking-wider text-slate-400">Sesión activa</p>
             <p className="mt-1 truncate text-sm font-semibold text-white">{nombre}</p>
             <p className="mt-1 text-xs text-sky-300">{nombresRol[rol]}</p>
           </div>
@@ -311,7 +311,7 @@ export function NavegacionPanel({
             className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-300 transition hover:bg-white/5 hover:text-white disabled:opacity-50"
           >
             <Icono name="log-out" />
-            {cerrando ? "Cerrando sesiÃ³n..." : "Cerrar sesiÃ³n"}
+            {cerrando ? "Cerrando sesión..." : "Cerrar sesión"}
           </button>
         </div>
       </aside>
@@ -320,7 +320,7 @@ export function NavegacionPanel({
         <div className="fixed inset-0 z-50 lg:hidden">
           <button
             type="button"
-            aria-label="Cerrar menÃº"
+            aria-label="Cerrar menú"
             onClick={() => setMenuMovil(false)}
             className="absolute inset-0 bg-slate-950/60"
           />
@@ -352,7 +352,7 @@ export function NavegacionPanel({
                 className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-300"
               >
                 <Icono name="log-out" />
-                Cerrar sesiÃ³n
+                Cerrar sesión
               </button>
             </div>
           </aside>
@@ -360,13 +360,13 @@ export function NavegacionPanel({
       )}
 
       <div className="min-h-screen lg:pl-[270px]">
-        <header className="sticky top-0 z-20 flex h-[76px] items-center justify-between border-b border-slate-200/80 bg-white/95 px-4 backdrop-blur-md sm:px-7 lg:px-9">
+        <header className="sticky top-0 z-20 flex h-[76px] items-center justify-between border-b border-slate-200/80 bg-white/95 px-4 backdrop-blur-md sm:px-7 lg:px-9" style={pathname === "/pos" ? { display: "none" } : undefined}>
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setMenuMovil(true)}
               className="rounded-xl border border-slate-200 p-2 text-slate-600 lg:hidden"
-              aria-label="Abrir menÃº"
+              aria-label="Abrir menú"
             >
               <Icono name="menu" />
             </button>

@@ -694,13 +694,13 @@ export function PuntoVenta() {
                               <Icono nombre="droplet" tam={42} />
                             </div>
                           )}
-                          <span className={`${styles.stockBadge} ${agotado ? styles.stockAgotado : ""}`}>
-                            {agotado ? "Agotado" : `${producto.existencia} disponibles`}
-                          </span>
                           {cantidad > 0 && <span className={styles.enCarrito}>{cantidad} en venta</span>}
                         </div>
 
                         <div className={styles.productoInfo}>
+                          <span className={`${styles.stockBadge} ${agotado ? styles.stockAgotado : ""}`}>
+                            {agotado ? "Agotado" : `${producto.existencia} disponibles`}
+                          </span>
                           <span className={styles.productoCodigo}>Cód. {producto.codigo}</span>
                           <h3>{producto.nombre}</h3>
                           <span className={styles.productoUnidad}>{producto.unidad}</span>

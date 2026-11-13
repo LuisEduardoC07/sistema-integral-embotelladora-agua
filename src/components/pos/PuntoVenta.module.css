@@ -524,7 +524,7 @@ textarea.campo { resize: vertical; }
   padding: 6px 4px;
   background: #fff;
   color: var(--marino);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -1125,7 +1125,7 @@ textarea.campo { resize: vertical; }
     min-height: 38px;
     gap: 3px;
     padding: 5px 3px;
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .totales {
@@ -1302,5 +1302,739 @@ textarea.campo { resize: vertical; }
 
   .panelVenta .metodos {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+/* =====================================================
+   POS COMPACTO: AJUSTE A PANTALLAS DE ESCRITORIO
+   ===================================================== */
+
+@media screen and (min-width: 700px) {
+  .contenedor {
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .areaTrabajo {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr) minmax(270px, 300px);
+    align-items: start;
+    gap: 10px;
+  }
+
+  .areaTrabajo > .catalogo {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    padding: 10px;
+  }
+
+  .areaTrabajo > .panelVenta {
+    grid-column: 2;
+    grid-row: 1;
+    position: static;
+    display: flex;
+    min-width: 0;
+    width: 100%;
+    max-height: none;
+    flex-direction: column;
+    gap: 7px;
+    overflow: visible;
+    padding: 0;
+  }
+
+  .panelVenta > section {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .catalogoCabecera h2 {
+    font-size: 16px;
+  }
+
+  .catalogoCabecera p {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  .busquedaContenedor {
+    height: 34px;
+    margin: 8px 0;
+    padding: 0 9px;
+  }
+
+  .productosGrid {
+    grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+    gap: 8px;
+  }
+
+  .productoVisual {
+    height: 76px;
+  }
+
+  .productoImagen {
+    padding: 5px;
+  }
+
+  .productoInfo {
+    padding: 7px;
+  }
+
+  .productoInfo h3 {
+    min-height: 30px;
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  .productoPie {
+    margin-top: 6px;
+  }
+
+  .productoPie > strong {
+    font-size: 13px;
+  }
+
+  .agregar {
+    min-height: 30px;
+    padding: 0 8px;
+  }
+
+  .panelVenta .listaCarrito {
+    max-height: 115px;
+    min-height: 55px;
+    overflow-y: auto;
+  }
+
+  .panelVenta :is(input, select, textarea) {
+    min-height: 32px;
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+
+  .panelVenta .tarjetaCabecera {
+    padding: 7px 10px;
+  }
+
+  .panelVenta .tarjetaCuerpo {
+    gap: 6px;
+    padding: 8px 10px;
+  }
+
+  .panelVenta .metodos {
+    gap: 5px;
+  }
+
+  .panelVenta .metodos button {
+    min-height: 32px;
+    padding: 5px 7px;
+  }
+}
+
+@media screen and (min-width: 700px) and (max-height: 700px) {
+  .contenedor {
+    gap: 6px;
+  }
+
+  .tituloIcono {
+    width: 34px;
+    height: 34px;
+  }
+
+  .resumenCajaItem {
+    gap: 6px;
+    padding: 6px 8px;
+  }
+
+  .areaTrabajo {
+    gap: 8px;
+  }
+
+  .panelVenta {
+    gap: 5px;
+  }
+
+  .panelVenta .listaCarrito {
+    max-height: 90px;
+  }
+}
+
+/* POS: distribucion de escritorio con altura controlada */
+@media screen and (min-width: 1051px) {
+  .contenedor {
+    height: calc(100dvh - 132px);
+    min-height: 0;
+    gap: 9px;
+    overflow: hidden;
+  }
+
+  .topbar {
+    flex: 0 0 auto;
+    gap: 10px;
+  }
+
+  .resumenCaja {
+    flex: 0 0 auto;
+    gap: 9px;
+  }
+
+  .resumenCajaItem {
+    min-width: 0;
+    padding: 9px 11px;
+  }
+
+  .areaTrabajo {
+    display: grid !important;
+    flex: 1 1 0;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr) !important;
+    align-items: stretch;
+    gap: 9px;
+    overflow: hidden;
+  }
+
+  .areaTrabajo > .catalogo,
+  .areaTrabajo > .carritoCatalogo,
+  .areaTrabajo > .panelVenta {
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+  }
+
+  /* Productos */
+  .areaTrabajo > .catalogo {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    overflow: hidden;
+  }
+
+  .catalogoCabecera {
+    flex: 0 0 auto;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .catalogoCabecera h2 {
+    font-size: 16px;
+  }
+
+  .catalogoCabecera p {
+    font-size: 11px;
+  }
+
+  .totalProductos {
+    padding: 5px 7px;
+    font-size: 11px;
+  }
+
+  .busquedaContenedor {
+    flex: 0 0 36px;
+    height: 36px;
+    margin: 9px 0;
+    gap: 6px;
+    padding: 0 8px;
+  }
+
+  .busquedaContenedor input {
+    font-size: 12px;
+  }
+
+  .catalogo .productosGrid {
+    flex: 1 1 0;
+    min-height: 0;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    align-content: start;
+    gap: 8px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 1px 3px 4px 1px;
+  }
+
+  .catalogo .productoVisual {
+    height: 64px;
+  }
+
+  .catalogo .productoInfo {
+    padding: 7px;
+  }
+
+  .catalogo .productoInfo h3 {
+    min-height: 29px;
+    font-size: 11px;
+    line-height: 1.25;
+  }
+
+  .catalogo .productoCodigo,
+  .catalogo .productoUnidad {
+    font-size: 11px;
+  }
+
+  .catalogo .productoPie {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 5px;
+    margin-top: 6px;
+  }
+
+  .catalogo .productoPie > strong {
+    font-size: 13px;
+  }
+
+  .catalogo .agregar {
+    width: 100%;
+    min-height: 30px;
+    padding: 0 5px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  /* Carrito */
+  .areaTrabajo > .carritoCatalogo {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .carritoCatalogo > .tarjeta {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .carritoCatalogo .tarjetaCabecera {
+    flex: 0 0 auto;
+    gap: 7px;
+    padding: 9px 10px;
+  }
+
+  .carritoCatalogo .tarjetaCabecera h2 {
+    font-size: 14px;
+  }
+
+  .carritoCatalogo .listaCarrito {
+    flex: 1 1 0;
+    min-height: 0;
+    max-height: none;
+    padding: 0 9px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .carritoCatalogo .lineaCarrito {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 6px;
+    padding: 8px 0;
+  }
+
+  .carritoCatalogo .miniatura {
+    width: 32px;
+    height: 32px;
+  }
+
+  .carritoCatalogo .lineaDatos > strong {
+    font-size: 12px;
+  }
+
+  .carritoCatalogo .lineaDatos > span {
+    font-size: 11px;
+  }
+
+  .carritoCatalogo .lineaDerecha {
+    grid-column: 2;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+  }
+
+  .carritoCatalogo .lineaImporte {
+    font-size: 12px;
+  }
+
+  .carritoCatalogo .cantidadControl button {
+    width: 26px;
+    height: 25px;
+  }
+
+  .carritoCatalogo .eliminarLinea {
+    width: 25px;
+    height: 25px;
+  }
+
+  /* Cliente, pagos y cobro */
+  .areaTrabajo > .panelVenta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 2px;
+  }
+
+  .panelVenta > .tarjeta {
+    flex: 0 0 auto;
+    overflow: hidden;
+  }
+
+  .panelVenta .tarjetaCabecera {
+    gap: 7px;
+    padding: 8px 10px;
+  }
+
+  .panelVenta .tarjetaCabecera h2 {
+    font-size: 14px;
+  }
+
+  .panelVenta .tarjetaCuerpo {
+    gap: 6px;
+    padding: 8px 10px;
+  }
+
+  .panelVenta .tarjetaCuerpo label,
+  .panelVenta .pagoFila label {
+    font-size: 11px;
+  }
+
+  .panelVenta .campo,
+  .panelVenta input,
+  .panelVenta select,
+  .panelVenta textarea {
+    min-height: 31px;
+    padding: 5px 7px;
+    font-size: 12px;
+  }
+
+  .panelVenta .pagosLista {
+    gap: 6px;
+  }
+
+  .panelVenta .pagoFila {
+    gap: 5px;
+  }
+
+  .panelVenta .pagosLista .pagoFila:not(:only-child) {
+    padding: 7px;
+  }
+
+  .panelVenta .metodos {
+    gap: 4px;
+  }
+
+  .panelVenta .metodo {
+    min-height: 43px;
+    gap: 2px;
+    padding: 3px 2px;
+    font-size: 9px;
+  }
+
+  .panelVenta .metodo svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .panelVenta .agregarPago {
+    min-height: 29px;
+    padding: 4px 7px;
+    font-size: 11px;
+  }
+
+  .panelVenta .resumen .totales {
+    gap: 5px;
+    padding: 8px 10px;
+  }
+
+  .panelVenta .resumen .totales > div {
+    font-size: 11px;
+  }
+
+  .panelVenta .resumen .totales .totalFinal {
+    margin-top: 1px;
+    padding-top: 6px;
+    font-size: 13px;
+  }
+
+  .panelVenta .resumen .totales .totalFinal strong {
+    font-size: 22px;
+  }
+
+  .panelVenta .estadoPagos {
+    gap: 5px;
+    margin: 0 10px 3px;
+    padding: 7px 9px;
+  }
+
+  .panelVenta .estadoPagos > div {
+    font-size: 11px;
+  }
+
+  .panelVenta .cobro {
+    gap: 5px;
+    padding: 6px 10px 10px;
+  }
+
+  .panelVenta .botonCobrar {
+    min-height: 42px;
+    padding: 0 9px;
+    font-size: 13px;
+  }
+
+  .panelVenta .notaCobro {
+    font-size: 11px;
+  }
+
+  /* Cierre de caja siempre reservado debajo de las columnas */
+  .contenedor > .cierreCaja {
+    flex: 0 0 auto;
+    min-height: 58px;
+    gap: 10px;
+    padding: 7px 12px;
+  }
+
+  .cierreCaja h2 {
+    font-size: 15px;
+  }
+
+  .cierreCaja p {
+    font-size: 11px;
+  }
+
+  .cierreCaja form {
+    width: min(100%, 280px);
+    gap: 5px;
+  }
+
+  .cierreCaja .inputMoneda input {
+    min-height: 30px;
+  }
+
+  .cierreCaja .botonCerrar {
+    min-height: 32px;
+  }
+}
+
+
+
+/* POS - DISTRIBUCION FINAL DE ESCRITORIO */
+@media screen and (min-width: 1051px) {
+  .contenedor {
+    height: calc(100dvh - 56px);
+    min-height: 0;
+    gap: 9px;
+    overflow: hidden;
+  }
+
+  .areaTrabajo {
+    display: grid !important;
+    flex: 1 1 0;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr) !important;
+    align-items: stretch;
+    gap: 9px;
+    overflow: hidden;
+  }
+
+  .areaTrabajo > .catalogo {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .areaTrabajo > .panelVenta {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    gap: 6px;
+    overflow: hidden;
+  }
+
+  .areaTrabajo > .carritoCatalogo {
+    grid-column: 3;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .catalogo .productosGrid {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .carritoCatalogo > .tarjeta {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .carritoCatalogo .listaCarrito {
+    flex: 1 1 0;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .panelVenta > .tarjeta {
+    flex: 0 0 auto;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .panelVenta .tarjetaCabecera {
+    gap: 7px;
+    padding: 7px 9px;
+  }
+
+  .panelVenta .tarjetaCuerpo {
+    gap: 5px;
+    padding: 7px 9px;
+  }
+
+  .panelVenta .campo,
+  .panelVenta input,
+  .panelVenta select,
+  .panelVenta textarea {
+    min-height: 29px;
+    padding: 4px 7px;
+    font-size: 11px;
+  }
+
+  .panelVenta .metodo {
+    min-height: 38px;
+    padding: 3px;
+    font-size: 9px;
+  }
+
+  .panelVenta .metodo svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .panelVenta .resumen .totales {
+    gap: 4px;
+    padding: 7px 9px;
+  }
+
+  .panelVenta .resumen .totales .totalFinal {
+    padding-top: 5px;
+    font-size: 12px;
+  }
+
+  .panelVenta .resumen .totales .totalFinal strong {
+    font-size: 20px;
+  }
+
+  .panelVenta .estadoPagos {
+    margin: 0 9px 3px;
+    padding: 6px 8px;
+  }
+
+  .panelVenta .cobro {
+    gap: 4px;
+    padding: 5px 9px 8px;
+  }
+
+  .panelVenta .botonCobrar {
+    min-height: 39px;
+  }
+
+  .catalogo .productoPie {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 5px;
+  }
+
+  .catalogo .agregar {
+    width: 100%;
+    min-height: 30px;
+    padding: 0 5px;
+    white-space: nowrap;
+  }
+
+  .contenedor > .cierreCaja {
+    display: none !important;
+  }
+}
+
+/* POS - TARJETAS COMPACTAS Y EXISTENCIAS */
+.stockBadge {
+  position: static;
+  display: inline-flex;
+  align-self: flex-start;
+  width: fit-content;
+  max-width: 100%;
+  margin-bottom: 3px;
+  padding: 3px 8px;
+  font-size: 11px;
+  box-shadow: none;
+}
+
+@media (min-width: 1100px) {
+  .contenedor .catalogo .productosGrid {
+    grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+    align-content: start;
+    gap: 8px;
+  }
+
+  .contenedor .catalogo .productoVisual {
+    height: 72px;
+  }
+
+  .contenedor .catalogo .productoInfo {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+    padding: 7px;
+  }
+
+  .contenedor .catalogo .productoInfo h3 {
+    min-height: 27px;
+    margin: 2px 0 0;
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
+  .contenedor .catalogo .productoPie {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+    margin-top: 5px;
+  }
+
+  .contenedor .catalogo .productoPie > strong {
+    min-width: 0;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+
+  .contenedor .catalogo .agregar {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 76px;
+    min-height: 29px;
+    padding: 0 7px;
+    font-size: 11px;
   }
 }

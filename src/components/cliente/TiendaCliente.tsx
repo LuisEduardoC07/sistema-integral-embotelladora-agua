@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import Link from "next/link";
 import type { ProductoCatalogoPublico } from "@/services/productos/catalogo-publico.service";
 import styles from "./TiendaCliente.module.css";
@@ -37,12 +37,15 @@ export default function TiendaCliente({
 }: Props) {
   const [carrito, setCarrito] = useState<ItemCarrito[]>([]);
   const [direccion, setDireccion] = useState("");
-  const [fecha, setFecha] = useState(fechaLocalActual);
+  const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
   const [observaciones, setObservaciones] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [mensajeError, setMensajeError] = useState("");
   const [pedidoCreado, setPedidoCreado] = useState("");
+  useEffect(() => {
+    setFecha(fechaLocalActual());
+  }, []);
 
   const cantidadArticulos = carrito.reduce((suma, item) => suma + item.cantidad, 0);
   const subtotalVisual = useMemo(
@@ -274,7 +277,7 @@ export default function TiendaCliente({
                 <input
                   type="date"
                   value={fecha}
-                  min={fechaLocalActual()}
+                  min={fecha}
                   onChange={(e) => setFecha(e.target.value)}
                   required
                 />
@@ -321,3 +324,4 @@ export default function TiendaCliente({
     </div>
   );
 }
+

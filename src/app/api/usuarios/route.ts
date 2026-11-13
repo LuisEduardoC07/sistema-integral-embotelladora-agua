@@ -78,8 +78,8 @@ async function registrarAuditoria(
   });
 
   if (error) {
-    console.error("[AuditorÃƒÆ’Ã‚Â­a de usuarios]", error.message);
-    throw new Error("No fue posible registrar la auditorÃƒÆ’Ã‚Â­a.");
+    console.error("[Auditoría de usuarios]", error.message);
+    throw new Error("No fue posible registrar la auditoría.");
   }
 }
 
@@ -96,7 +96,7 @@ export async function GET() {
           : [];
 
     if (rolesPermitidos.length === 0) {
-      return responderError("No tienes autorizaciÃƒÆ’Ã‚Â³n para consultar usuarios.", 403);
+      return responderError("No tienes autorización para consultar usuarios.", 403);
     }
 
     const { data: roles, error: errorRoles } = await admin
@@ -199,7 +199,7 @@ export async function GET() {
         .limit(25);
 
       if (error) {
-        console.error("[Consulta de auditorÃƒÆ’Ã‚Â­a]", error.message);
+        console.error("[Consulta de auditoría]", error.message);
       } else {
         auditoria = data ?? [];
       }
@@ -234,7 +234,7 @@ export async function POST(request: NextRequest) {
     try {
       cuerpo = await request.json();
     } catch {
-      return responderError("Los datos enviados no son vÃƒÆ’Ã‚Â¡lidos.", 400);
+      return responderError("Los datos enviados no son válidos.", 400);
     }
 
     const nombre =
@@ -256,34 +256,34 @@ export async function POST(request: NextRequest) {
     }
 
     if (!validarCorreo(email)) {
-      return responderError("Introduce un correo electrÃƒÆ’Ã‚Â³nico vÃƒÆ’Ã‚Â¡lido.", 400);
+      return responderError("Introduce un correo electrónico válido.", 400);
     }
 
     if (telefono.length > 30) {
-      return responderError("El telÃƒÆ’Ã‚Â©fono no puede superar 30 caracteres.", 400);
+      return responderError("El teléfono no puede superar 30 caracteres.", 400);
     }
 
     if (password.length < 8 || password.length > 72) {
       return responderError(
-        "La contraseÃƒÆ’Ã‚Â±a debe tener entre 8 y 72 caracteres.",
+        "La contraseña debe tener entre 8 y 72 caracteres.",
         400
       );
     }
 
     if (rol !== "cliente" && rol !== "cajero" && rol !== "administrador") {
-      return responderError("El rol seleccionado no es vÃƒÆ’Ã‚Â¡lido.", 400);
+      return responderError("El rol seleccionado no es válido.", 400);
     }
 
     if (!puedeGestionar(actor.roles.codigo, rol)) {
       return responderError(
-        "No tienes autorizaciÃƒÆ’Ã‚Â³n para crear usuarios con ese rol.",
+        "No tienes autorización para crear usuarios con ese rol.",
         403
       );
     }
 
     if (rol === "cliente") {
       if (actor.roles.codigo !== "superusuario") {
-        return responderError("Solo el superusuario puede crear cuentas de cliente desde este mÃ³dulo.", 403);
+        return responderError("Solo el superusuario puede crear cuentas de cliente desde este módulo.", 403);
       }
     } else {
       const permiso =
@@ -303,7 +303,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (errorRol || !rolDB) {
-      throw new Error("No se encontrÃƒÆ’Ã‚Â³ el rol solicitado.");
+      throw new Error("No se encontró el rol solicitado.");
     }
 
     const { data: creado, error: errorCreacion } =
@@ -319,14 +319,14 @@ export async function POST(request: NextRequest) {
 
       if (/already|registered|exists/i.test(mensaje)) {
         return responderError(
-          "Ya existe una cuenta registrada con ese correo electrÃƒÆ’Ã‚Â³nico.",
+          "Ya existe una cuenta registrada con ese correo electrónico.",
           409
         );
       }
 
-      console.error("[CreaciÃƒÆ’Ã‚Â³n de usuario]", errorCreacion);
+      console.error("[Creación de usuario]", errorCreacion);
       return responderError(
-        "No fue posible crear la cuenta. Verifica los datos e intÃƒÆ’Ã‚Â©ntalo nuevamente.",
+        "No fue posible crear la cuenta. Verifica los datos e inténtalo nuevamente.",
         400
       );
     }
@@ -345,7 +345,7 @@ export async function POST(request: NextRequest) {
       .eq("id", usuarioId);
 
     if (errorPerfil) {
-      console.error("[AsignaciÃƒÆ’Ã‚Â³n de rol]", errorPerfil.message);
+      console.error("[Asignación de rol]", errorPerfil.message);
 
       return responderError(
         "La cuenta fue creada, pero no se pudo completar su perfil. Debe revisarse antes de habilitar su acceso.",
@@ -365,7 +365,7 @@ export async function POST(request: NextRequest) {
           rol,
           estado: "activo",
         },
-        motivo: "Cuenta creada desde el mÃƒÆ’Ã‚Â³dulo de usuarios.",
+        motivo: "Cuenta creada desde el módulo de usuarios.",
       });
     } catch {
       await admin
@@ -374,14 +374,14 @@ export async function POST(request: NextRequest) {
         .eq("id", usuarioId);
 
       return responderError(
-        "La cuenta quedÃƒÆ’Ã‚Â³ desactivada porque no se pudo completar su auditorÃƒÆ’Ã‚Â­a.",
+        "La cuenta quedó desactivada porque no se pudo completar su auditoría.",
         500
       );
     }
 
     return NextResponse.json(
       {
-        mensaje: "Cuenta creada correctamente. El usuario ya puede iniciar sesiÃƒÆ’Ã‚Â³n con el correo y la contraseÃƒÆ’Ã‚Â±a establecidos.",
+        mensaje: "Cuenta creada correctamente. El usuario ya puede iniciar sesión con el correo y la contraseña establecidos.",
         usuario: {
           id: usuarioId,
           nombre,
@@ -415,7 +415,7 @@ export async function PATCH(request: NextRequest) {
     try {
       cuerpo = await request.json();
     } catch {
-      return responderError("Los datos enviados no son vÃƒÆ’Ã‚Â¡lidos.", 400);
+      return responderError("Los datos enviados no son válidos.", 400);
     }
 
     const usuarioId =
@@ -432,15 +432,15 @@ export async function PATCH(request: NextRequest) {
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
     if (!uuid.test(usuarioId)) {
-      return responderError("El identificador del usuario no es vÃƒÆ’Ã‚Â¡lido.", 400);
+      return responderError("El identificador del usuario no es válido.", 400);
     }
 
     if (usuarioId === actor.id) {
-      return responderError("No puedes desactivar ni modificar tu propia cuenta desde este mÃƒÆ’Ã‚Â³dulo.", 400);
+      return responderError("No puedes desactivar ni modificar tu propia cuenta desde este módulo.", 400);
     }
 
     if (accion !== "desactivar" && accion !== "reactivar") {
-      return responderError("La operaciÃƒÆ’Ã‚Â³n solicitada no es vÃƒÆ’Ã‚Â¡lida.", 400);
+      return responderError("La operación solicitada no es válida.", 400);
     }
 
     const admin = createAdminClient();
@@ -462,7 +462,7 @@ export async function PATCH(request: NextRequest) {
       .maybeSingle();
 
     if (errorPerfil || !perfil) {
-      return responderError("No se encontrÃƒÆ’Ã‚Â³ el usuario solicitado.", 404);
+      return responderError("No se encontró el usuario solicitado.", 404);
     }
 
     const perfilGestion = perfil as unknown as PerfilGestion;
@@ -482,7 +482,7 @@ export async function PATCH(request: NextRequest) {
     const estadoAnterior = perfilGestion.estado;
 
     if (accion === "desactivar" && estadoAnterior === "suspendido") {
-      return responderError("La cuenta ya estÃƒÆ’Ã‚Â¡ desactivada.", 409);
+      return responderError("La cuenta ya está desactivada.", 409);
     }
 
     if (accion === "reactivar" && estadoAnterior !== "suspendido") {
@@ -498,9 +498,9 @@ export async function PATCH(request: NextRequest) {
         await admin.auth.admin.getUserById(usuarioId);
 
       if (errorAuth || !usuarioAuth.user) {
-        console.error("[ValidaciÃƒÆ’Ã‚Â³n de correo al reactivar]", errorAuth);
+        console.error("[Validación de correo al reactivar]", errorAuth);
         return responderError(
-          "No fue posible verificar la confirmaciÃƒÆ’Ã‚Â³n del correo del usuario.",
+          "No fue posible verificar la confirmación del correo del usuario.",
           500
         );
       }
@@ -516,7 +516,7 @@ export async function PATCH(request: NextRequest) {
       .eq("id", usuarioId);
 
     if (errorActualizacion) {
-      console.error("[ActualizaciÃƒÆ’Ã‚Â³n de usuario]", errorActualizacion.message);
+      console.error("[Actualización de usuario]", errorActualizacion.message);
       return responderError("No fue posible actualizar el estado de la cuenta.", 500);
     }
 
@@ -542,7 +542,7 @@ export async function PATCH(request: NextRequest) {
         .eq("id", usuarioId);
 
       return responderError(
-        "No se pudo registrar la auditorÃƒÆ’Ã‚Â­a. Se revirtiÃƒÆ’Ã‚Â³ el cambio.",
+        "No se pudo registrar la auditoría. Se revirtió el cambio.",
         500
       );
     }
@@ -573,7 +573,7 @@ export async function DELETE(request: NextRequest) {
     try {
       cuerpo = await request.json();
     } catch {
-      return responderError("La solicitud no contiene datos vÃƒÆ’Ã‚Â¡lidos.", 400);
+      return responderError("La solicitud no contiene datos válidos.", 400);
     }
 
     const usuarioId =
@@ -589,7 +589,7 @@ export async function DELETE(request: NextRequest) {
         usuarioId
       )
     ) {
-      return responderError("El identificador del usuario no es vÃƒÆ’Ã‚Â¡lido.", 400);
+      return responderError("El identificador del usuario no es válido.", 400);
     }
 
     if (actor.id === usuarioId) {
@@ -641,7 +641,7 @@ export async function DELETE(request: NextRequest) {
         : actor.roles.codigo === "administrador" && rolObjetivo === "cajero";
 
     if (!puedeEliminar) {
-      return responderError("No tienes autorizaciÃƒÆ’Ã‚Â³n para eliminar esta cuenta.", 403);
+      return responderError("No tienes autorización para eliminar esta cuenta.", 403);
     }
 
     const { error: errorAuth } = await admin.auth.admin.deleteUser(usuarioId);
@@ -656,7 +656,7 @@ export async function DELETE(request: NextRequest) {
         console.error("[Usuarios] Perfil archivado, pero Auth no pudo eliminarse:", errorAuth.message);
         return NextResponse.json(
           {
-            error: "La identidad histÃƒÆ’Ã‚Â³rica y el perfil fueron procesados, pero no se pudo completar la eliminaciÃƒÆ’Ã‚Â³n de autenticaciÃƒÆ’Ã‚Â³n.",
+            error: "La identidad histórica y el perfil fueron procesados, pero no se pudo completar la eliminación de autenticación.",
             authPendiente: true,
             usuarioId,
           },
@@ -670,7 +670,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json(
       {
-        mensaje: "La cuenta fue eliminada y su identidad histÃƒÆ’Ã‚Â³rica quedÃƒÆ’Ã‚Â³ preservada.",
+        mensaje: "La cuenta fue eliminada y su identidad histórica quedó preservada.",
         usuarioId,
       },
       {
@@ -684,7 +684,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     console.error("[Usuarios] Error inesperado al eliminar cuenta:", error);
-    return responderError("OcurriÃƒÆ’Ã‚Â³ un error al eliminar la cuenta.", 500);
+    return responderError("Ocurrió un error al eliminar la cuenta.", 500);
   }
 }
 
@@ -707,7 +707,7 @@ export async function PUT(request: NextRequest) {
     try {
       cuerpo = await request.json();
     } catch {
-      return responderError("Los datos enviados no son vÃƒÂ¡lidos.", 400);
+      return responderError("Los datos enviados no son válidos.", 400);
     }
 
     const usuarioId =
@@ -716,15 +716,15 @@ export async function PUT(request: NextRequest) {
     const accion = cuerpo.accion;
 
     if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(usuarioId)) {
-      return responderError("El identificador del usuario no es vÃƒÂ¡lido.", 400);
+      return responderError("El identificador del usuario no es válido.", 400);
     }
 
     if (usuarioId === actor.id) {
-      return responderError("No puedes modificar tu propia cuenta desde este mÃƒÂ³dulo.", 403);
+      return responderError("No puedes modificar tu propia cuenta desde este módulo.", 403);
     }
 
     if (accion !== "editar" && accion !== "password") {
-      return responderError("La operaciÃƒÂ³n solicitada no es vÃƒÂ¡lida.", 400);
+      return responderError("La operación solicitada no es válida.", 400);
     }
 
     const { data: perfil, error: errorPerfil } = await admin
@@ -743,7 +743,7 @@ export async function PUT(request: NextRequest) {
       .maybeSingle();
 
     if (errorPerfil || !perfil) {
-      return responderError("No se encontrÃƒÂ³ el usuario solicitado.", 404);
+      return responderError("No se encontró el usuario solicitado.", 404);
     }
 
     const perfilGestion = perfil as unknown as PerfilGestion;
@@ -773,20 +773,20 @@ export async function PUT(request: NextRequest) {
         return responderError("El nombre debe tener entre 2 y 100 caracteres.", 400);
       }
       if (!validarCorreo(email)) {
-        return responderError("Introduce un correo electrÃƒÂ³nico vÃƒÂ¡lido.", 400);
+        return responderError("Introduce un correo electrónico válido.", 400);
       }
       if (telefono.length > 30) {
-        return responderError("El telÃƒÂ©fono no puede superar 30 caracteres.", 400);
+        return responderError("El teléfono no puede superar 30 caracteres.", 400);
       }
     } else if (password.length < 8 || password.length > 72) {
-      return responderError("La contraseÃƒÂ±a debe tener entre 8 y 72 caracteres.", 400);
+      return responderError("La contraseña debe tener entre 8 y 72 caracteres.", 400);
     }
 
     const { data: usuarioAuth, error: errorAuthActual } =
       await admin.auth.admin.getUserById(usuarioId);
 
     if (errorAuthActual || !usuarioAuth.user) {
-      return responderError("No fue posible verificar la cuenta de autenticaciÃƒÂ³n.", 500);
+      return responderError("No fue posible verificar la cuenta de autenticación.", 500);
     }
 
     const emailAnterior = usuarioAuth.user.email ?? "";
@@ -817,7 +817,7 @@ export async function PUT(request: NextRequest) {
     if (errorActualizacionAuth) {
       console.error("[Usuarios PUT Auth]", errorActualizacionAuth.message);
       return responderError(
-        "No fue posible actualizar los datos de autenticaciÃƒÂ³n. Verifica el correo o la contraseÃƒÂ±a.",
+        "No fue posible actualizar los datos de autenticación. Verifica el correo o la contraseña.",
         400
       );
     }
@@ -836,7 +836,7 @@ export async function PUT(request: NextRequest) {
         });
 
         console.error("[Usuarios PUT perfil]", errorActualizacionPerfil.message);
-        return responderError("No fue posible actualizar el perfil. Se intentÃƒÂ³ restaurar el correo anterior.", 500);
+        return responderError("No fue posible actualizar el perfil. Se intentó restaurar el correo anterior.", 500);
       }
     }
 
@@ -881,8 +881,8 @@ export async function PUT(request: NextRequest) {
 
       return responderError(
         accion === "editar"
-          ? "No se pudo registrar la auditorÃƒÂ­a. Se intentÃƒÂ³ revertir la ediciÃƒÂ³n."
-          : "La contraseÃƒÂ±a se actualizÃƒÂ³, pero no se pudo registrar la auditorÃƒÂ­a. Se requiere revisiÃƒÂ³n.",
+          ? "No se pudo registrar la auditoría. Se intentó revertir la edición."
+          : "La contraseña se actualizó, pero no se pudo registrar la auditoría. Se requiere revisión.",
         500
       );
     }
@@ -890,7 +890,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({
       mensaje: accion === "editar"
         ? "Los datos de la cuenta fueron actualizados."
-        : "La contraseÃƒÂ±a fue actualizada correctamente.",
+        : "La contraseña fue actualizada correctamente.",
     });
   } catch (error) {
     if (error instanceof ErrorAutorizacion) {

@@ -49,7 +49,7 @@ export function HistorialVentas({
   const [estado, setEstado] = useState("");
   const [busqueda, setBusqueda] = useState("");
 
-  // Solo estos valores se envÃ­an a la API.
+  // Solo estos valores se envían a la API.
   const [filtrosAplicados, setFiltrosAplicados] = useState({
     fechaDesde: "",
     fechaHasta: "",
@@ -213,7 +213,7 @@ export function HistorialVentas({
     <section className={styles.contenedor}>
       <header className={styles.encabezado}>
         <div>
-          <span className={styles.etiqueta}>GESTIÃ“N COMERCIAL</span>
+          <span className={styles.etiqueta}>GESTIÓN COMERCIAL</span>
           <h1>Historial de ventas</h1>
           <p>Consulta operaciones, comprobantes, pagos y rendimiento comercial.</p>
         </div>
@@ -232,7 +232,7 @@ export function HistorialVentas({
           <input type="date" value={fechaHasta} onChange={(e) => setFechaHasta(e.target.value)} />
         </label>
         <label>
-          MÃ©todo de pago
+          Método de pago
           <select value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)}>
             <option value="">Todos</option>
             <option value="efectivo">Efectivo</option>
@@ -266,7 +266,7 @@ export function HistorialVentas({
           </label>
         )}
         <label className={styles.busqueda}>
-          Buscar venta, cliente o nÃºmero
+          Buscar venta, cliente o número
           <input
             type="search"
             maxLength={100}
@@ -294,31 +294,31 @@ export function HistorialVentas({
       <div className={styles.tarjetas}>
         <article className={styles.tarjeta}>
           <span>Ventas completadas</span>
-          <strong>{estadisticas?.cantidad_ventas ?? "â€”"}</strong>
+          <strong>{estadisticas?.cantidad_ventas ?? "—"}</strong>
           <small>{importe(estadisticas?.total_ventas ?? 0)}</small>
         </article>
         <article className={styles.tarjeta}>
           <span>Ticket promedio</span>
-          <strong>{estadisticas ? importe(estadisticas.ticket_promedio) : "â€”"}</strong>
+          <strong>{estadisticas ? importe(estadisticas.ticket_promedio) : "—"}</strong>
           <small>Por venta completada</small>
         </article>
         <article className={styles.tarjeta}>
           <span>Productos vendidos</span>
-          <strong>{estadisticas?.productos_vendidos ?? "â€”"}</strong>
+          <strong>{estadisticas?.productos_vendidos ?? "—"}</strong>
           <small>Unidades registradas</small>
         </article>
         <article className={styles.tarjeta}>
           <span>Ventas anuladas</span>
-          <strong>{estadisticas?.cantidad_anuladas ?? "â€”"}</strong>
+          <strong>{estadisticas?.cantidad_anuladas ?? "—"}</strong>
           <small>{importe(estadisticas?.total_anulado ?? 0)}</small>
         </article>
       </div>
 
       <div className={styles.graficos}>
         <article className={styles.panelGrafico}>
-          <h2>Ventas por dÃ­a</h2>
+          <h2>Ventas por día</h2>
           {!estadisticas?.ventas_por_dia.length ? (
-            <p className={styles.vacioGrafico}>No hay datos para el perÃ­odo seleccionado.</p>
+            <p className={styles.vacioGrafico}>No hay datos para el período seleccionado.</p>
           ) : (
             <div className={styles.barras}>
               {estadisticas.ventas_por_dia.map((item) => (
@@ -335,7 +335,7 @@ export function HistorialVentas({
         </article>
 
         <article className={styles.panelGrafico}>
-          <h2>MÃ©todos de pago</h2>
+          <h2>Métodos de pago</h2>
           {!estadisticas?.metodos_pago.length ? (
             <p className={styles.vacioGrafico}>No hay pagos registrados.</p>
           ) : (
@@ -351,14 +351,14 @@ export function HistorialVentas({
         </article>
 
         <article className={styles.panelGrafico}>
-          <h2>Productos mÃ¡s vendidos</h2>
+          <h2>Productos más vendidos</h2>
           {!estadisticas?.productos_mas_vendidos.length ? (
             <p className={styles.vacioGrafico}>No hay productos vendidos.</p>
           ) : (
             <div className={styles.listaBarras}>
               {estadisticas.productos_mas_vendidos.map((item) => (
                 <div className={styles.filaBarra} key={item.producto_id}>
-                  <div><span>{item.nombre} Â· {item.cantidad} uds.</span><strong>{importe(item.total)}</strong></div>
+                  <div><span>{item.nombre} · {item.cantidad} uds.</span><strong>{importe(item.total)}</strong></div>
                   <div className={styles.progreso}><span style={{ width: `${item.cantidad / maxProducto * 100}%` }} /></div>
                 </div>
               ))}
@@ -374,7 +374,7 @@ export function HistorialVentas({
             <div className={styles.listaBarras}>
               {estadisticas.ventas_por_cajero.map((item) => (
                 <div className={styles.filaBarra} key={item.usuario_id}>
-                  <div><span>{item.nombre} Â· {item.cantidad} ventas</span><strong>{importe(item.total)}</strong></div>
+                  <div><span>{item.nombre} · {item.cantidad} ventas</span><strong>{importe(item.total)}</strong></div>
                   <div className={styles.progreso}><span style={{ width: `${item.total / maxCajero * 100}%` }} /></div>
                 </div>
               ))}
@@ -389,7 +389,7 @@ export function HistorialVentas({
             <h2>Operaciones registradas</h2>
             <p>Selecciona una venta para consultar sus productos y pagos.</p>
           </div>
-          <span>{datos?.ventas.length ?? 0} registros en esta pÃ¡gina</span>
+          <span>{datos?.ventas.length ?? 0} registros en esta página</span>
         </div>
 
         <div className={styles.tablaScroll}>
@@ -413,7 +413,7 @@ export function HistorialVentas({
                   <td>{fechaHora(venta.creado_en)}</td>
                   <td>{venta.cajero_nombre}</td>
                   <td>{venta.cliente_nombre || "Consumidor final"}</td>
-                  <td>{[...new Set(venta.pagos.map((p) => metodoNombre[p.metodo]))].join(" + ") || "â€”"}</td>
+                  <td>{[...new Set(venta.pagos.map((p) => metodoNombre[p.metodo]))].join(" + ") || "—"}</td>
                   <td className={styles.total}>{importe(venta.total)}</td>
                   <td>
                     <span className={venta.estado === "completada" ? styles.estadoOk : styles.estadoAnulado}>
@@ -438,7 +438,7 @@ export function HistorialVentas({
         </div>
 
         <div className={styles.paginacion}>
-          <span>{datos?.hay_mas ? "Hay mÃ¡s operaciones disponibles." : "Fin de los resultados."}</span>
+          <span>{datos?.hay_mas ? "Hay más operaciones disponibles." : "Fin de los resultados."}</span>
           <button
             className={styles.botonSecundario}
             disabled={cargando || !datos?.hay_mas || !datos.siguiente_cursor}
@@ -456,11 +456,11 @@ export function HistorialVentas({
           <section className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="detalle-venta-titulo">
             <div className={styles.modalEncabezado}>
               <div>
-                <span className={styles.etiqueta}>DETALLE DE OPERACIÃ“N</span>
+                <span className={styles.etiqueta}>DETALLE DE OPERACIÓN</span>
                 <h2 id="detalle-venta-titulo">Venta #{ventaSeleccionada.numero}</h2>
                 <p>{fechaHora(ventaSeleccionada.creado_en)}</p>
               </div>
-              <button className={styles.cerrarModal} onClick={() => setVentaSeleccionada(null)} aria-label="Cerrar detalle">Ã—</button>
+              <button className={styles.cerrarModal} onClick={() => setVentaSeleccionada(null)} aria-label="Cerrar detalle">×</button>
             </div>
 
             <div className={styles.datosVenta}>

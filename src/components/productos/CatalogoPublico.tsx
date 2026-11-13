@@ -1,3 +1,4 @@
+﻿import { connection } from "next/server";
 import styles from "./CatalogoPublico.module.css";
 import { obtenerCatalogoPublico } from "@/services/productos/catalogo-publico.service";
 
@@ -8,6 +9,8 @@ const formatoPrecio = new Intl.NumberFormat("es-DO", {
 });
 
 export default async function CatalogoPublico() {
+  await connection();
+
   const resultado = await obtenerCatalogoPublico();
 
   return (
